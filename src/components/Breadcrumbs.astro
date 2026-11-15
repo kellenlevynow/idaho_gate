@@ -1,0 +1,17 @@
+---
+import type { Crumb } from '@/lib/schema';
+interface Props { crumbs: Crumb[]; tone?: 'dark' | 'light' }
+const { crumbs, tone = 'dark' } = Astro.props;
+---
+<nav aria-label="Breadcrumb" class:list={['tech', tone === 'dark' ? 'text-steel-400' : 'text-steel-500']}>
+  <ol class="flex flex-wrap items-center gap-x-2 gap-y-1">
+    {crumbs.map((c, i) => (
+      <li class="flex items-center gap-2">
+        {i > 0 && <span aria-hidden="true">/</span>}
+        {i < crumbs.length - 1
+          ? <a class:list={['no-underline', tone === 'dark' ? 'hover:text-bone' : 'hover:text-ink-900']} href={c.path}>{c.name}</a>
+          : <span aria-current="page" class={tone === 'dark' ? 'text-steel-200' : 'text-ink-900'}>{c.name}</span>}
+      </li>
+    ))}
+  </ol>
+</nav>

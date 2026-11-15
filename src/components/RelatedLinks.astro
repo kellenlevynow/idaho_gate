@@ -1,0 +1,30 @@
+---
+import Icon from './Icon.astro';
+import { titleIndex } from '@/lib/content';
+interface Props { paths: string[]; heading?: string; tone?: 'light' | 'bone' }
+const { paths, heading = 'Keep reading', tone = 'bone' } = Astro.props;
+const idx = await titleIndex();
+const items = paths.map((p) => ({ path: p, ...idx[p] })).filter((i) => {
+  if (!i.title) console.warn(`[related] unknown path ${i.path} on ${Astro.url.pathname}`);
+  return !!i.title;
+});
+---
+{items.length > 0 && (
+  <section class:list={[tone === 'bone' ? 'surface-bone' : 'surface-paper', 'on-light section-tight']} data-track-location="related">
+    <div class="wrap">
+      <p class="eyebrow text-ember-600">{heading}</p>
+      <ul class="mt-8 grid gap-px bg-ink-900/15 sm:grid-cols-2 lg:grid-cols-3">
+        {items.map((i) => (
+          <li class:list={[tone === 'bone' ? 'bg-bone' : 'bg-paper']}>
+            <a href={i.path} class="group flex h-full flex-col p-6 no-underline transition-colors hover:bg-white">
+              <span class="tech text-steel-500">{i.kind}</span>
+              <span class="h4 mt-2 group-hover:text-ember-600">{i.title}</span>
+              <span class="mt-2 flex-1 text-[0.92rem] leading-snug text-steel-500">{i.summary}</span>
+              <span class="mt-4 text-ember-600"><Icon name="arrow" /></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}

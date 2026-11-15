@@ -1,0 +1,122 @@
+{
+ "estate-ridgeline": {
+  "operation": "double-swing",
+  "width": 16.0,
+  "height": 6.0,
+  "top": "arch",
+  "archRise": 1.2,
+  "infill": "ridgeline",
+  "posts": "masonry",
+  "automation": true
+ },
+ "driveway-picket": {
+  "operation": "double-swing",
+  "width": 14.0,
+  "height": 5.5,
+  "top": "arch",
+  "archRise": 0.8,
+  "infill": "pickets",
+  "posts": "steel",
+  "automation": true
+ },
+ "modern-slat": {
+  "operation": "double-swing",
+  "width": 16.0,
+  "height": 6.0,
+  "top": "flat",
+  "archRise": 0.0,
+  "infill": "slats",
+  "posts": "steel",
+  "automation": true
+ },
+ "slide-slat": {
+  "operation": "slide",
+  "width": 18.0,
+  "height": 6.0,
+  "top": "flat",
+  "archRise": 0.0,
+  "infill": "slats",
+  "posts": "steel",
+  "automation": true
+ },
+ "slide-commercial": {
+  "operation": "slide",
+  "width": 24.0,
+  "height": 7.0,
+  "top": "flat",
+  "archRise": 0.0,
+  "infill": "pickets",
+  "posts": "steel",
+  "automation": true
+ },
+ "swing-single": {
+  "operation": "single-swing",
+  "width": 12.0,
+  "height": 5.5,
+  "top": "flat",
+  "archRise": 0.0,
+  "infill": "pickets",
+  "posts": "steel",
+  "automation": true
+ },
+ "ranch-double": {
+  "operation": "double-swing",
+  "width": 16.0,
+  "height": 4.6,
+  "top": "flat",
+  "archRise": 0.0,
+  "infill": "ranch",
+  "posts": "masonry",
+  "automation": false
+ },
+ "pedestrian": {
+  "operation": "single-swing",
+  "width": 4.0,
+  "height": 5.6,
+  "top": "arch",
+  "archRise": 0.45,
+  "infill": "pickets",
+  "posts": "steel",
+  "automation": false
+ },
+ "privacy-plate": {
+  "operation": "double-swing",
+  "width": 14.0,
+  "height": 6.5,
+  "top": "flat",
+  "archRise": 0.0,
+  "infill": "plate",
+  "posts": "steel",
+  "automation": true
+ },
+ "estate-pillars": {
+  "operation": "double-swing",
+  "width": 18.0,
+  "height": 6.5,
+  "top": "arch",
+  "archRise": 1.5,
+  "infill": "pickets",
+  "posts": "masonry",
+  "automation": true
+ },
+ "automated-swing": {
+  "operation": "double-swing",
+  "width": 16.0,
+  "height": 6.0,
+  "top": "flat",
+  "archRise": 0.0,
+  "infill": "pickets",
+  "posts": "steel",
+  "automation": true
+ },
+ "ranch-single": {
+  "operation": "single-swing",
+  "width": 14.0,
+  "height": 4.6,
+  "top": "flat",
+  "archRise": 0.0,
+  "infill": "ranch",
+  "posts": "steel",
+  "automation": false
+ }
+}

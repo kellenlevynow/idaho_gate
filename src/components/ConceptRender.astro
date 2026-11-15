@@ -1,0 +1,14 @@
+---
+/** A rendered concept image from the gate studio scene. Always labeled as a concept. */
+import { Picture } from 'astro:assets';
+interface Props { name: string; alt: string; caption?: string; class?: string; eager?: boolean; sizes?: string; tag?: boolean }
+const { name, alt, caption, class: cls = '', eager = false, sizes = '(min-width: 1024px) 50vw, 100vw', tag = true } = Astro.props;
+const files = import.meta.glob<{ default: ImageMetadata }>('@/assets/renders/presets/*.jpg', { eager: true });
+const img = Object.entries(files).find(([p]) => p.endsWith(`/${name}.jpg`))?.[1].default;
+if (!img) throw new Error(`Missing concept render "${name}". Run npm run render:presets.`);
+---
+<figure class:list={['relative', cls]}>
+  <Picture src={img} alt={alt} formats={['avif', 'webp']} widths={[480, 800, 1200, 1600]} sizes={sizes} loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : 'auto'} class="h-full w-full object-cover" />
+  {tag && <span class="concept-tag absolute left-3 top-3 bg-ink-950/70 text-stone-200">Concept render</span>}
+  {caption && <figcaption class="tech mt-3 text-steel-400">{caption}</figcaption>}
+</figure>

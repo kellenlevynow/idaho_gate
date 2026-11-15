@@ -9,6 +9,7 @@
     "preview": "astro preview",
     "check": "astro check",
     "render:stills": "node scripts/render-stills.cjs",
+    "render:presets": "node scripts/render-presets.cjs",
     "test:e2e": "node scripts/e2e.cjs"
   },
   "dependencies": {

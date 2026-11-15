@@ -43,7 +43,7 @@ export const finishes: Finish[] = [
   },
   {
     key: 'weathering', name: 'Weathering steel patina', note: 'Left to form its own oxide skin. No coating to maintain.',
-    color: '#9a5530', metalness: 0.12, roughness: 0.94, back: '#5c321d', texture: 'patina', swatch: '#8c4a28',
+    color: '#8a5234', metalness: 0.12, roughness: 0.94, back: '#56301d', texture: 'patina', swatch: '#8c4a28',
   },
   {
     key: 'galvanized', name: 'Hot-dip galvanized', note: 'Zinc inside and out. The long-life choice for hard service.',
@@ -72,7 +72,7 @@ function noiseTexture(kind: 'plain' | 'patina' | 'spangle') {
         const x = rand() * size, y = rand() * size, r = 4 + rand() * 26;
         const g = ctx.createRadialGradient(x, y, 0, x, y, r);
         const dark = rand() > 0.35;
-        g.addColorStop(0, dark ? `rgba(70,32,14,${0.1 + rand() * 0.22})` : `rgba(255,190,130,${0.05 + rand() * 0.12})`);
+        g.addColorStop(0, dark ? `rgba(70,32,14,${0.06 + rand() * 0.14})` : `rgba(255,190,130,${0.03 + rand() * 0.07})`);
         g.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = g;
         ctx.fillRect(x - r, y - r, r * 2, r * 2);

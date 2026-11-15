@@ -1,0 +1,26 @@
+---
+import Icon from './Icon.astro';
+interface Props { faqs: { q: string; a: string }[]; tone?: 'dark' | 'light' }
+const { faqs, tone = 'light' } = Astro.props;
+---
+<div class:list={['faq-list', tone === 'dark' ? 'faq-dark' : '']}>
+  {faqs.map((f) => (
+    <details class="faq">
+      <summary><span class="faq-q">{f.q}</span><span class="faq-icon"><Icon name="plus" size={14} /></span></summary>
+      <div class="faq-a"><p>{f.a}</p></div>
+    </details>
+  ))}
+</div>
+<style is:global>
+  .faq { border-top: 1px solid var(--rule-light); }
+  .faq:last-child { border-bottom: 1px solid var(--rule-light); }
+  .faq-dark .faq { border-color: var(--rule-dark); }
+  .faq summary { display: flex; align-items: flex-start; justify-content: space-between; gap: 1.5rem; padding: 1.15rem 0; list-style: none; }
+  .faq-q { font-size: 1.1rem; font-weight: 620; font-stretch: 106%; line-height: 1.3; }
+  .faq-icon { flex: none; display: grid; place-items: center; width: 1.9rem; height: 1.9rem; border: 1px solid currentColor; border-radius: 50%; opacity: 0.6; transition: transform 0.3s var(--ease-out-expo), opacity 0.2s; }
+  .faq summary:hover .faq-icon { opacity: 1; }
+  .faq[open] .faq-icon { transform: rotate(45deg); opacity: 1; color: var(--color-ember-600); }
+  .faq-dark .faq[open] .faq-icon { color: var(--color-ember-400); }
+  .faq-a { padding: 0 3.4rem 1.4rem 0; max-width: 46rem; color: var(--color-steel-500); line-height: 1.65; }
+  .faq-dark .faq-a { color: var(--color-steel-300); }
+</style>

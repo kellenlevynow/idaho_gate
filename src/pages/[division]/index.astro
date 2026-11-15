@@ -1,0 +1,104 @@
+---
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import Drawing from '@/components/Drawing.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import TrustStrip from '@/components/TrustStrip.astro';
+import { site } from '@/site.config';
+import { enabledDivisions } from '@/data/nav';
+import { getServicesByDivision, servicePath } from '@/lib/content';
+import { breadcrumbSchema, serviceSchema } from '@/lib/schema';
+
+export function getStaticPaths() {
+  return enabledDivisions.map((division) => ({ params: { division: division.slug }, props: { division } }));
+}
+const { division } = Astro.props;
+const services = await getServicesByDivision(division.slug);
+const crumbs = [{ name: 'Home', path: '/' }, { name: division.name, path: `/${division.slug}/` }];
+const quoteHref = `/quote/?path=${division.inquiry}`;
+const others = enabledDivisions.filter((d) => d.slug !== division.slug);
+---
+<Base
+  title={division.seoTitle}
+  description={division.description}
+  schema={[breadcrumbSchema(crumbs), serviceSchema({ name: division.name, description: division.description, path: `/${division.slug}/` })]}
+  service={division.slug}
+  cta={{ path: division.inquiry, context: `${division.slug}_hub` }}
+>
+  <section class="surface-dark grid-dark" data-track-location="hub_hero">
+    <div class="wrap grid items-center gap-10 py-10 lg:grid-cols-12 lg:gap-12 lg:py-16">
+      <div class="lg:col-span-6">
+        <Breadcrumbs crumbs={crumbs} />
+        <p class="eyebrow mt-8 text-ember-400">{division.kicker}</p>
+        <h1 class="display-sm mt-5">{division.heading}</h1>
+        {division.intro.map((p, i) => <p class:list={[i === 0 ? 'lede mt-6 text-steel-200' : 'mt-4 text-steel-300', 'max-w-xl']}>{p}</p>)}
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={quoteHref} class="btn btn-lg" data-cta="hub_quote">Request a quote <Icon name="arrow" /></a>
+          <a href={`tel:${site.contact.phoneTel}`} class="btn btn-lg btn-ghost-dark"><Icon name="phone" /> {site.contact.phoneDisplay}</a>
+        </div>
+        <div class="mt-8"><TrustStrip /></div>
+      </div>
+      <div class="lg:col-span-6">
+        <div class="sheet sheet-dark bg-ink-900"><Drawing kind={division.heroVisual.kind} preset={division.heroVisual.preset} theme="dark" /></div>
+        <p class="tech mt-3 text-steel-400">Concept drawing · not for construction</p>
+      </div>
+    </div>
+  </section>
+
+  {division.groups.map((g, gi) => {
+    const items = services.filter((s) => s.data.group === g.key);
+    if (!items.length) return null;
+    return (
+      <section class:list={[gi % 2 ? 'surface-bone' : 'surface-paper', 'on-light section-tight']}>
+        <div class="wrap">
+          <div class="flex items-baseline justify-between gap-6 border-b border-ink-900 pb-4">
+            <h2 class="h2">{g.label}</h2>
+            <p class="tech text-steel-500">{String(items.length).padStart(2, '0')} pages</p>
+          </div>
+          <ul class="mt-8 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+            {items.map((s) => (
+              <li>
+                <a href={servicePath(s)} class="group block no-underline">
+                  {s.data.visual && (
+                    <div class="sheet overflow-hidden bg-white transition-shadow group-hover:shadow-[0_18px_40px_-20px_rgb(19_20_21/0.5)]">
+                      <Drawing kind={s.data.visual.kind} preset={s.data.visual.preset} view={s.data.visual.view === 'plan' ? 'plan' : 'elevation'} theme="light" dims={false} titleBlock={false} footings={false} decorative />
+                    </div>
+                  )}
+                  <p class="h3 mt-5 group-hover:text-ember-600">{s.data.navTitle || s.data.title}</p>
+                  <p class="mt-2 text-[0.98rem] leading-relaxed text-steel-500">{s.data.summary}</p>
+                  <span class="link-arrow mt-4">Read more <Icon name="arrow" /></span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    );
+  })}
+
+  <section class="surface-black section-tight" data-track-location="hub_cross">
+    <div class="wrap grid gap-px bg-white/10 md:grid-cols-3">
+      {division.slug !== 'fabrication' && (
+        <a href="/studio/" class="group bg-ink-950 p-8 no-underline" data-cta="hub_studio">
+          <p class="tech text-ember-400">Interactive</p>
+          <p class="h3 mt-3 text-bone group-hover:text-ember-400">Gate studio</p>
+          <p class="mt-2 text-steel-300">Configure a gate in 3D, see it exploded or as a drawing, then send it with your quote request.</p>
+        </a>
+      )}
+      {others.map((o) => (
+        <a href={`/${o.slug}/`} class="group bg-ink-950 p-8 no-underline">
+          <p class="tech text-ember-400">{o.kicker}</p>
+          <p class="h3 mt-3 text-bone group-hover:text-ember-400">{o.name}</p>
+          <p class="mt-2 text-steel-300">{o.summary}</p>
+        </a>
+      ))}
+      {division.slug === 'fabrication' && (
+        <a href="/company/capabilities/" class="group bg-ink-950 p-8 no-underline">
+          <p class="tech text-ember-400">The shop</p>
+          <p class="h3 mt-3 text-bone group-hover:text-ember-400">Capabilities</p>
+          <p class="mt-2 text-steel-300">Processes, materials and the size of work the shop can take on.</p>
+        </a>
+      )}
+    </div>
+  </section>
+</Base>

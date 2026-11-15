@@ -17,6 +17,12 @@ export interface Division {
   inquiry: InquiryPath;
   kicker: string;
   summary: string;
+  seoTitle: string;
+  description: string;
+  heading: string;
+  intro: string[];
+  /** gate preset or fab drawing shown in the hub hero */
+  heroVisual: { kind: 'gate' | 'fab'; preset: string };
   /** groups shown in the mega menu and hub page, in order */
   groups: { key: string; label: string }[];
 }
@@ -31,6 +37,14 @@ export const divisions: Division[] = [
     kicker: 'Division 01',
     summary:
       'Driveway, estate, ranch and commercial gates designed around your opening, your grade and your winters, then fabricated and installed by the same crew.',
+    seoTitle: 'Custom gates in North Idaho',
+    description: 'Custom driveway, estate, sliding, ranch and commercial gates designed, fabricated and installed by Idaho Gate Co. across North Idaho and the Inland Northwest.',
+    heading: 'Custom gates, drawn for your opening and built in our shop.',
+    intro: [
+      'Every gate we build starts with a site visit and a drawing. Width, grade, swing room, snow and wind decide the type. Your home and your taste decide the look.',
+      'Pick a gate type below to see how it works, what it needs from your site and what to ask before you buy one from anybody.',
+    ],
+    heroVisual: { kind: 'gate', preset: 'estate-ridgeline' },
     groups: [
       { key: 'types', label: 'Gate types' },
       { key: 'finishing', label: 'Finishing the entrance' },
@@ -46,6 +60,14 @@ export const divisions: Division[] = [
     kicker: 'Division 02',
     summary:
       'Operators, access control and safety devices specified for the gate they move. New systems, retrofits and troubleshooting.',
+    seoTitle: 'Gate automation and access control',
+    description: 'Gate operators, keypads, intercoms, solar power and safety devices, specified and installed by Idaho Gate Co. for new and existing gates in North Idaho.',
+    heading: 'Automation that fits the gate, the traffic and the winter.',
+    intro: [
+      'An automated gate is a system: an operator, a power supply, safety devices, and a way to decide who gets in. Each part has to suit the others and the gate they serve.',
+      'We specify the whole system, install it, set it up and show you how it works. We also retrofit and repair existing gates.',
+    ],
+    heroVisual: { kind: 'gate', preset: 'automated-swing' },
     groups: [{ key: 'systems', label: 'Systems' }],
   },
   {
@@ -57,6 +79,14 @@ export const divisions: Division[] = [
     kicker: 'Division 03',
     summary:
       'Steel and aluminum fabrication for builders, businesses and property owners. Railings, architectural metalwork, enclosures and one-off assemblies.',
+    seoTitle: 'Metal fabrication in North Idaho',
+    description: 'Steel and aluminum fabrication by Idaho Gate Co. Railings, architectural metalwork, structural steel, enclosures, screens and one-off work in North Idaho.',
+    heading: 'The same shop that builds the gates builds the rest.',
+    intro: [
+      'Gate work demands accurate cutting, long straight frames and welds that carry load and look good. That skill set covers a lot of ground beyond gates.',
+      'We fabricate for homeowners, builders, farms and businesses, from a single bracket to a full package of railings and miscellaneous metals.',
+    ],
+    heroVisual: { kind: 'fab', preset: 'structural' },
     groups: [
       { key: 'core', label: 'Fabrication' },
       { key: 'architectural', label: 'Architectural' },
