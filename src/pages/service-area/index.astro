@@ -1,0 +1,89 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import ServiceMap from '@/components/ServiceMap.astro';
+import { site, serviceTowns, tierLabels, type ServiceTier } from '@/site.config';
+import { breadcrumbSchema } from '@/lib/schema';
+
+const areas = (await getCollection('areas')).sort((a, b) => a.data.order - b.data.order);
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Service area', path: '/service-area/' }];
+const tiers: { key: ServiceTier; blurb: string }[] = [
+  { key: 'core', blurb: 'Kootenai County. Day-to-day service, free site visits, fastest scheduling.' },
+  { key: 'extended', blurb: 'Bonner, Boundary and Shoshone counties and the Spokane area. Free site visits, scheduled by route.' },
+  { key: 'project', blurb: 'Farther into Eastern Washington and Western Montana. Evaluated job by job, often fabricate and deliver.' },
+];
+---
+<Base
+  title="Service area: North Idaho and the Inland Northwest"
+  description="Where Idaho Gate Co. works. Core service in Kootenai County, regular routes through North Idaho and Spokane, project work in Washington and Montana."
+  schema={[breadcrumbSchema(crumbs)]}
+  service="area/hub"
+>
+  <section class="surface-dark grid-dark" data-track-location="area_hub_hero">
+    <div class="wrap grid items-center gap-10 py-10 lg:grid-cols-12 lg:gap-14 lg:py-16">
+      <div class="lg:col-span-6">
+        <Breadcrumbs crumbs={crumbs} />
+        <p class="eyebrow mt-8 text-ember-400">Service area</p>
+        <h1 class="display-sm mt-5">North Idaho first. The Inland Northwest by <span class="serif-accent text-ember-400">route.</span></h1>
+        <p class="lede mt-6 max-w-xl text-steel-200">We work from the Panhandle outward. Close to home we are there in a day or two. Farther out we schedule by route or take the job as a project. We will always tell you which applies.</p>
+        <ol class="mt-8 space-y-4">
+          {tiers.map((t) => (
+            <li class="grid grid-cols-[auto_1fr] gap-x-4 border-t border-white/12 pt-4">
+              <span class="tech pt-1 text-ember-400">{tierLabels[t.key]}</span>
+              <span class="col-start-1 col-span-2 text-[0.98rem] text-steel-300 sm:col-start-2 sm:col-span-1 sm:row-start-1">{t.blurb}</span>
+            </li>
+          ))}
+        </ol>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="/quote/" class="btn btn-lg" data-cta="area_hub_quote">Request a quote <Icon name="arrow" /></a>
+          <a href={`tel:${site.contact.phoneTel}`} class="btn btn-lg btn-ghost-dark"><Icon name="phone" /> {site.contact.phoneDisplay}</a>
+        </div>
+      </div>
+      <div class="lg:col-span-6"><ServiceMap /></div>
+    </div>
+  </section>
+
+  <section class="surface-paper on-light section-tight">
+    <div class="wrap">
+      <p class="eyebrow text-ember-600">Local pages</p>
+      <h2 class="h2 mt-4 max-w-3xl">Each place asks something different of a gate.</h2>
+      <p class="mt-4 max-w-2xl text-steel-500">Slope around the lakes. Wind on the prairie. Snow in Bonner County. Different rulebooks across the state lines. These pages cover the conditions and who to call in each area.</p>
+      <ul class="mt-10 grid gap-px bg-ink-900/15 sm:grid-cols-2 lg:grid-cols-3">
+        {areas.map((a) => (
+          <li class="bg-paper">
+            <a href={`/service-area/${a.id}/`} class="group flex h-full flex-col p-6 no-underline transition-colors hover:bg-white">
+              <span class="tech text-steel-500">{tierLabels[a.data.tier]} · {a.data.state}</span>
+              <span class="h3 mt-2 group-hover:text-ember-600">{a.data.navTitle}</span>
+              <span class="mt-2 flex-1 text-[0.95rem] leading-snug text-steel-500">{a.data.summary}</span>
+              <span class="mt-4 text-ember-600"><Icon name="arrow" /></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="surface-bone on-light section-tight">
+    <div class="wrap grid gap-10 lg:grid-cols-12">
+      <div class="lg:col-span-4">
+        <p class="eyebrow text-ember-600">All communities</p>
+        <h2 class="h2 mt-4">Do you come to my town?</h2>
+        <p class="mt-4 text-steel-500">If it is on this list, yes, in the way the tier describes. If it is not, ask. The answer is quick and honest.</p>
+      </div>
+      <div class="lg:col-span-8">
+        {(['core', 'extended', 'project'] as ServiceTier[]).map((tier) => (
+          <div class="border-t border-ink-900/15 py-5">
+            <p class="tech text-ember-600">{tierLabels[tier]}</p>
+            <ul class="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-[1.02rem]">
+              {serviceTowns.filter((t) => t.tier === tier).map((t) => (
+                <li>{t.page ? <a class="underline decoration-ink-900/30 underline-offset-4 hover:text-ember-600" href={`/service-area/${t.page}/`}>{t.name}, {t.state}</a> : <span>{t.name}, {t.state}</span>}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>

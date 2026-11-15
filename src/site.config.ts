@@ -39,6 +39,12 @@ export const site = {
     responseTime: 'one business day',
   },
 
+  /**
+   * Owner note for the about page. Hidden until filled in, so the site
+   * never shows a placeholder person. TODO(owner): name, role, a few lines.
+   */
+  owner: { name: '', role: '', note: '' },
+
   social: {
     // Old handles from the previous brand. Left empty until confirmed.
     facebook: '',

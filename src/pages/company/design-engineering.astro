@@ -1,0 +1,104 @@
+---
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import PageHero from '@/components/PageHero.astro';
+import Drawing from '@/components/Drawing.astro';
+import ConceptRender from '@/components/ConceptRender.astro';
+import CompareSlider from '@/components/CompareSlider.astro';
+import RelatedLinks from '@/components/RelatedLinks.astro';
+import { breadcrumbSchema } from '@/lib/schema';
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Company', path: '/company/about/' }, { name: 'Design and engineering', path: '/company/design-engineering/' }];
+const loads = [
+  ['Dead load', 'The weight of the leaf, hanging off its hinge side. It sets hinge rating, post stiffness and footing size.'],
+  ['Wind', 'Pressure on the gate face. Small on open pickets, large on solid panels. It sets frame bracing, latching and operator size.'],
+  ['Snow and ice', 'Weight on horizontal surfaces and resistance in the gate path. It sets clearance and how hard an operator may push.'],
+  ['Operating forces', 'What the operator applies when it starts, stops and meets an obstruction. It sets mounting points and reinforcement.'],
+  ['Impact', 'The bump from a bumper or a bucket. It sets wall thickness, guarding and where bollards go.'],
+  ['Ground', 'Frost depth, soil and drainage. It sets how deep and how wide the footing is.'],
+];
+---
+<Base
+  title="Design and engineering"
+  description="How Idaho Gate Co. designs a gate. Scaled elevations and plans, 3D models, exploded views and the loads that size posts, footings, hinges and operators."
+  schema={[breadcrumbSchema(crumbs)]}
+>
+  <PageHero crumbs={crumbs} tone="black" eyebrow="Design and engineering" title={`Drawings before <span class="serif-accent text-ember-400">steel.</span>`} lede="We model a gate before we build it. The same model gives you a rendering to look at, an elevation to approve, a plan to check clearances and an exploded view that shows how it goes together.">
+    <div slot="visual">
+      <CompareSlider before="estate-ridgeline-line" after="estate-ridgeline" beforeLabel="Line drawing" afterLabel="Rendered model" alt="Concept gate shown as a rendered model, with a slider revealing the same view as a line drawing" />
+      <p class="tech mt-3 text-steel-400">Drag to compare · same model, same camera · concept</p>
+    </div>
+  </PageHero>
+
+  <section class="surface-paper on-light section">
+    <div class="wrap">
+      <p class="eyebrow text-ember-600">What you receive</p>
+      <h2 class="h2 mt-4 max-w-3xl">Four views of the same gate.</h2>
+      <div class="mt-12 grid gap-x-8 gap-y-14 lg:grid-cols-2">
+        <figure>
+          <div class="sheet bg-white"><Drawing preset="estate-ridgeline" theme="light" /></div>
+          <figcaption class="mt-5"><span class="tech text-ember-600">01 · Elevation</span><p class="h3 mt-1">What it looks like, to scale.</p><p class="mt-2 text-steel-500">Clear opening, leaf widths, heights, post and pillar positions, and footings shown as hidden lines. This is the drawing you approve.</p></figcaption>
+        </figure>
+        <figure>
+          <div class="sheet bg-white"><Drawing preset="estate-ridgeline" view="plan" theme="light" /></div>
+          <figcaption class="mt-5"><span class="tech text-ember-600">02 · Plan</span><p class="h3 mt-1">Where it goes when it moves.</p><p class="mt-2 text-steel-500">Swing arcs or slide travel, the area that must stay clear, operator positions and the photo eye beam. This is where slope and snow problems show up on paper.</p></figcaption>
+        </figure>
+        <figure>
+          <ConceptRender name="estate-ridgeline" alt="Concept rendering of an arched double swing gate with ridgeline panels and stone pillars" class="sheet overflow-hidden" />
+          <figcaption class="mt-5"><span class="tech text-ember-600">03 · Rendered model</span><p class="h3 mt-1">What it looks like, in the round.</p><p class="mt-2 text-steel-500">A 3D model you can turn and refinish. Useful for choosing between infills and finishes, and for showing an HOA or a spouse.</p></figcaption>
+        </figure>
+        <figure>
+          <ConceptRender name="estate-ridgeline-exploded" alt="Exploded view of the concept gate with frame, pickets, panels, posts, footings and pillars separated" class="sheet overflow-hidden" />
+          <figcaption class="mt-5"><span class="tech text-ember-600">04 · Exploded view</span><p class="h3 mt-1">How it goes together.</p><p class="mt-2 text-steel-500">Every assembly pulled apart along the axis it is installed on. It is how we plan fabrication, and it shows you where your money goes.</p></figcaption>
+        </figure>
+      </div>
+      <div class="mt-12 flex flex-wrap items-center gap-4 border-t border-ink-900/15 pt-8">
+        <p class="max-w-xl text-steel-500">You can do a version of this yourself. The gate studio runs on the same parametric model.</p>
+        <a href="/studio/" class="btn" data-cta="design_studio">Open the gate studio <Icon name="arrow" /></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="surface-dark section">
+    <div class="wrap grid gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-4">
+        <p class="eyebrow text-ember-400">What the design answers to</p>
+        <h2 class="h2 mt-4">Six loads decide the structure.</h2>
+        <p class="mt-5 text-steel-300">Style is a choice. Structure is not. These are the forces every gate sees, and what each one sizes.</p>
+      </div>
+      <ol class="grid gap-px bg-white/10 sm:grid-cols-2 lg:col-span-8">
+        {loads.map(([t, b], i) => (
+          <li class="bg-ink-900 p-6">
+            <span class="tech text-ember-400">0{i + 1}</span>
+            <p class="h4 mt-3">{t}</p>
+            <p class="mt-2 text-[0.95rem] leading-relaxed text-steel-300">{b}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="surface-bone on-light section">
+    <div class="wrap grid gap-12 lg:grid-cols-12">
+      <div class="prose-gate lg:col-span-7">
+        <h2>Where a licensed engineer comes in</h2>
+        <p>We design gates and metalwork to sound fabrication practice and the published limits of the hardware and operators we use. Some work needs more than that.</p>
+        <ul>
+          <li><strong>Structural steel in buildings.</strong> Beams, columns, frames and connections are designed by the engineer of record. We fabricate to those drawings.</li>
+          <li><strong>Life-safety guards and stairs</strong> where the jurisdiction or the design professional requires calculations.</li>
+          <li><strong>Large or unusual gates.</strong> Very wide, very tall or solid gates in exposed locations, and overhead structures such as entry arches and canopies.</li>
+          <li><strong>Anything a permit office asks to see stamped.</strong></li>
+        </ul>
+        <p>When a project needs it, a licensed engineer provides the calculations and we build to them. We will tell you at the quote stage, and the cost appears as its own line.</p>
+        <h2>Custom artwork</h2>
+        <p>Panels, signs and address plates are drawn in-house as vector cut files. We work from a photograph, a logo or a sketch, simplify it so it will hold together in steel, and send a proof at scale. What you approve is what the table cuts.</p>
+        <h2>Standards we design to</h2>
+        <p>Automated vehicular gates are designed with UL 325 and ASTM F2200 in view, and railings to the building code your jurisdiction has adopted. We explain the gate standards in plain terms under <a href="/automation/safety-and-compliance/">safety and compliance</a>.</p>
+      </div>
+      <aside class="lg:col-span-4 lg:col-start-9">
+        <div class="sheet bg-white"><Drawing kind="fab" preset="bracket" theme="light" /></div>
+        <p class="tech mt-3 text-steel-500">Fabrication parts get the same treatment · concept</p>
+      </aside>
+    </div>
+  </section>
+  <RelatedLinks paths={['/company/fabrication-process/', '/company/approach/', '/projects/selkirk-ridgeline-estate-gate/', '/resources/gate-design-guide/', '/fabrication/structural-and-custom-steel/', '/studio/']} heading="Related" tone="light" />
+</Base>

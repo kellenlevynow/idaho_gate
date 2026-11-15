@@ -1,0 +1,95 @@
+---
+/**
+ * Schematic service-area map. Towns are plotted from real coordinates with
+ * a simple projection. Borders, lakes and highways are simplified for
+ * orientation only. Static SVG with real links, no script required.
+ */
+import { serviceTowns, tierLabels, type ServiceTier } from '@/site.config';
+interface Props { highlight?: string; tone?: 'dark' | 'light'; class?: string; compact?: boolean }
+const { highlight, tone = 'dark', class: cls = '', compact = false } = Astro.props;
+
+const LON0 = -118.15, LON1 = -114.95, LAT0 = 46.55, LAT1 = 49.15;
+const K = 250;
+const kx = Math.cos((47.8 * Math.PI) / 180) * K;
+const W = Math.round((LON1 - LON0) * kx), H = Math.round((LAT1 - LAT0) * K);
+const X = (lon: number) => Math.round((lon - LON0) * kx * 10) / 10;
+const Y = (lat: number) => Math.round((LAT1 - lat) * K * 10) / 10;
+const line = (pts: [number, number][]) => pts.map(([lo, la], i) => `${i ? 'L' : 'M'}${X(lo)} ${Y(la)}`).join(' ');
+
+const idWa: [number, number][] = [[-117.04, 49], [-117.04, 46.55]];
+const idMt: [number, number][] = [[-116.05, 49], [-116.05, 47.98], [-115.72, 47.7], [-115.74, 47.54], [-115.33, 47.26], [-114.97, 47.0], [-114.95, 46.98]];
+const canada: [number, number][] = [[LON0, 49], [LON1, 49]];
+const lakes: [number, number][][] = [
+  [[-116.8, 47.67], [-116.76, 47.62], [-116.78, 47.55], [-116.72, 47.48], [-116.75, 47.42], [-116.8, 47.47], [-116.84, 47.55], [-116.83, 47.63]],
+  [[-116.55, 48.27], [-116.42, 48.25], [-116.3, 48.17], [-116.38, 48.08], [-116.45, 47.98], [-116.52, 48.02], [-116.47, 48.12], [-116.58, 48.2]],
+  [[-116.87, 48.5], [-116.83, 48.62], [-116.87, 48.72], [-116.92, 48.62]],
+  [[-116.74, 47.77], [-116.68, 47.79], [-116.66, 47.76], [-116.72, 47.75]],
+];
+const i90: [number, number][] = [[LON0, 47.6], [-117.43, 47.66], [-117.12, 47.68], [-116.95, 47.71], [-116.78, 47.69], [-116.5, 47.61], [-116.12, 47.54], [-115.93, 47.47], [-115.7, 47.46], [-115.3, 47.38], [LON1, 47.2]];
+const us95: [number, number][] = [[-117.0, 46.55], [-116.98, 47.0], [-116.82, 47.4], [-116.78, 47.68], [-116.79, 47.95], [-116.57, 48.27], [-116.4, 48.5], [-116.32, 48.69], [-116.18, 49.0]];
+
+const pal = tone === 'dark'
+  ? { bg: '#131415', land: '#1b1c1e', line: 'rgba(233,230,220,0.38)', faint: 'rgba(233,230,220,0.16)', text: '#e9e6dc', muted: '#8d929a', water: '#26303a', ember: '#e0703a' }
+  : { bg: '#f6f3ec', land: '#ece8df', line: 'rgba(19,20,21,0.42)', faint: 'rgba(19,20,21,0.16)', text: '#131415', muted: '#55595f', water: '#cfd8dc', ember: '#a9481a' };
+const radius: Record<ServiceTier, number> = { core: 6.5, extended: 5, project: 3.6 };
+// label placement tweaks so names do not collide
+const nudge: Record<string, [number, number, 'start' | 'end']> = {
+  'Post Falls': [-4, 22, 'end'], 'Hayden': [12, -2, 'start'], "Coeur d'Alene": [14, 14, 'start'], 'Rathdrum': [-13, -4, 'end'],
+  'Spokane': [-10, 4, 'end'], 'Newport': [-10, 4, 'end'], 'Priest River': [10, 15, 'start'], 'Kellogg': [0, -12, 'start'],
+  'Deer Park': [-9, 4, 'end'], 'Cheney': [-9, 4, 'end'],
+};
+// In the dense Kootenai and Spokane cluster, only towns with their own page get a label.
+const labeled = (t: { page?: string; tier: string; name: string }) => !!t.page || t.tier === 'project' || ['St. Maries', 'Newport'].includes(t.name);
+const towns = serviceTowns.map((t) => ({ ...t, x: X(t.lon), y: Y(t.lat), n: nudge[t.name] || [10, 4, 'start'] as [number, number, 'start' | 'end'] }));
+---
+<figure class:list={['service-map', cls]}>
+  <svg viewBox={`0 0 ${W} ${H}`} class="h-auto w-full" role="img" aria-label="Schematic map of the Idaho Gate Co. service area across North Idaho, Eastern Washington and Western Montana, with towns marked by service tier">
+    <rect width={W} height={H} fill={pal.bg} />
+    <g stroke={pal.faint} stroke-width="1">
+      {Array.from({ length: Math.floor(W / 50) + 1 }, (_, i) => <line x1={i * 50} y1="0" x2={i * 50} y2={H} />)}
+      {Array.from({ length: Math.floor(H / 50) + 1 }, (_, i) => <line x1="0" y1={i * 50} x2={W} y2={i * 50} />)}
+    </g>
+    {/* Idaho panhandle tint */}
+    <path d={`${line(idWa)} L${X(-114.95)} ${Y(46.55)} L${X(-114.95)} ${Y(46.98)} ${line([...idMt].reverse()).replace('M', 'L')} Z`} fill={pal.land} opacity="0.9" />
+    {lakes.map((l) => <path d={`${line(l)} Z`} fill={pal.water} />)}
+    <path d={line(i90)} fill="none" stroke={pal.faint} stroke-width="3" />
+    <path d={line(us95)} fill="none" stroke={pal.faint} stroke-width="3" />
+    <path d={line(idWa)} fill="none" stroke={pal.line} stroke-width="1.2" stroke-dasharray="7 5" />
+    <path d={line(idMt)} fill="none" stroke={pal.line} stroke-width="1.2" stroke-dasharray="7 5" />
+    <path d={line(canada)} fill="none" stroke={pal.line} stroke-width="1.2" stroke-dasharray="2 5" />
+    <g font-family="'IBM Plex Mono',ui-monospace,monospace" font-size="11" letter-spacing="2.2" fill={pal.muted}>
+      <text x={X(-117.95)} y={Y(48.5)}>WASHINGTON</text>
+      <text x={X(-116.93)} y={Y(46.72)}>IDAHO</text>
+      <text x={X(-115.75)} y={Y(48.2)}>MONTANA</text>
+      <text x={X(-116.75)} y={Y(49.06)} font-size="9">BRITISH COLUMBIA</text>
+      <text x={X(-117.9)} y={Y(47.53)} font-size="9">I-90</text>
+      <text x={X(-116.92)} y={Y(47.15)} font-size="9">US-95</text>
+    </g>
+    {towns.map((t) => {
+      const on = highlight && (t.page === highlight || t.name === highlight);
+      const dot = (
+        <g class="town">
+          {t.tier === 'core' && <circle cx={t.x} cy={t.y} r={radius[t.tier] + 6} fill="none" stroke={pal.ember} stroke-width="1" opacity="0.5" />}
+          {on && <circle cx={t.x} cy={t.y} r="17" fill="none" stroke={pal.ember} stroke-width="1.6" />}
+          <circle cx={t.x} cy={t.y} r={radius[t.tier]} fill={t.tier === 'project' ? pal.bg : pal.ember} stroke={pal.ember} stroke-width="1.5" />
+          {labeled(t) && !(compact && t.tier === 'project') && (
+            <text x={t.x + t.n[0]} y={t.y + t.n[1]} text-anchor={t.n[2]} fill={pal.text} font-family="Archivo, sans-serif" font-size={t.tier === 'core' ? 13 : 11.5} font-weight={t.tier === 'core' || on ? 650 : 480} paint-order="stroke" stroke={pal.bg} stroke-width="3.5" stroke-linejoin="round">{t.name}</text>
+          )}
+        </g>
+      );
+      return t.page ? <a href={`/service-area/${t.page}/`} aria-label={`${t.name}, ${t.state}: ${tierLabels[t.tier]}`}>{dot}</a> : dot;
+    })}
+  </svg>
+  <figcaption class:list={['mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-[0.82rem]', tone === 'dark' ? 'text-steel-300' : 'text-steel-500']}>
+    <span class="inline-flex items-center gap-2"><span class="inline-block h-3 w-3 rounded-full bg-ember-500 ring-1 ring-ember-500 ring-offset-2 ring-offset-transparent"></span>Core</span>
+    <span class="inline-flex items-center gap-2"><span class="inline-block h-2.5 w-2.5 rounded-full bg-ember-500"></span>Extended, by route</span>
+    <span class="inline-flex items-center gap-2"><span class="inline-block h-2 w-2 rounded-full border border-ember-500"></span>By project</span>
+    <span class="tech opacity-80">Schematic, not to scale</span>
+  </figcaption>
+</figure>
+<style>
+  .service-map a .town text { transition: fill 0.15s; }
+  .service-map a:hover .town text, .service-map a:focus-visible .town text { fill: var(--color-ember-400); }
+  .service-map a:focus-visible { outline: none; }
+  .service-map a:focus-visible .town circle:last-of-type { stroke-width: 4; }
+</style>

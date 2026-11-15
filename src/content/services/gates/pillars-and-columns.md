@@ -2,7 +2,7 @@
 title: Stone pillars and gate columns
 navTitle: Pillars and columns
 seoTitle: Stone gate pillars and masonry columns
-description: Stone, brick and manufactured stone gate pillars in North Idaho, built with the gate. Reinforced cores, proper footings and conduit cast in for lights and devices.
+description: Stone, brick and manufactured stone gate pillars in North Idaho, built with the gate. Reinforced cores, proper footings and conduit cast in.
 summary: Stone, brick and manufactured stone pillars, built with the gate so the two fit.
 lede: Pillars frame the gate and anchor the entrance. Built with the gate, they hide the steel, carry the lights and make the whole thing look intended.
 division: gates

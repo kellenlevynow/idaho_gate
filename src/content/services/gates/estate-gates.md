@@ -2,7 +2,7 @@
 title: Estate and architectural entrance gates
 navTitle: Estate gates
 seoTitle: Estate entrance gates in North Idaho
-description: Estate and architectural entrance gates for lake, acreage and hillside properties in North Idaho. Custom design, structural steel, stone pillars and automation.
+description: Estate and architectural entrance gates for lake, acreage and hillside properties in North Idaho. Custom design, stone pillars and automation.
 summary: Large-format entrances with pillars, lighting and custom metalwork, engineered as one system.
 lede: An estate entrance is a piece of architecture. The gate, the pillars, the lighting and the automation have to be designed together, because they have to work together.
 division: gates

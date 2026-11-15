@@ -1,0 +1,107 @@
+---
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import PageHero from '@/components/PageHero.astro';
+import Drawing from '@/components/Drawing.astro';
+import RelatedLinks from '@/components/RelatedLinks.astro';
+import { site } from '@/site.config';
+import { breadcrumbSchema } from '@/lib/schema';
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Company', path: '/company/about/' }, { name: 'About us', path: '/company/about/' }];
+const principles = [
+  ['Draw it first', 'Every project gets a drawing you approve before steel is cut. It is the cheapest place to find a problem and the clearest way to agree on what you are buying.'],
+  ['Build the part nobody sees', 'Posts, footings, hinge stiles and weld sequence decide whether a gate works in year fifteen. That is where we spend the effort.'],
+  ['One shop, start to finish', 'The people who measure your opening are the people who build the gate and hang it. Nothing gets lost between a salesman and a subcontractor.'],
+  ['Say it straight', 'If your site will not take the gate you want, we tell you why and what will work. If we are not the right shop for a job, we say that too.'],
+];
+---
+<Base
+  title="About Idaho Gate Co."
+  description="Idaho Gate Co. is a North Idaho fabrication shop that designs, builds and installs custom gates and metalwork. One shop from drawing to last weld."
+  schema={[breadcrumbSchema(crumbs), { '@context': 'https://schema.org', '@type': 'AboutPage', name: 'About Idaho Gate Co.', url: `${site.url}/company/about/` }]}
+>
+  <PageHero crumbs={crumbs} eyebrow="About us" title={`A fabrication shop that draws what it builds, and installs what it <span class="serif-accent text-ember-400">draws.</span>`} lede="Idaho Gate Co. designs, fabricates and installs custom gates and metalwork across North Idaho. We are a working shop, not a dealer. If our name is on it, we made it.">
+    <div slot="visual" class="sheet sheet-dark bg-ink-900"><Drawing preset="estate-ridgeline" theme="dark" decorative /></div>
+  </PageHero>
+
+  <section class="surface-paper on-light section">
+    <div class="wrap grid gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <p class="eyebrow text-ember-600">Where we come from</p>
+        <h2 class="h2 mt-4">Gates first. Everything else followed.</h2>
+      </div>
+      <div class="prose-gate lg:col-span-6 lg:col-start-7">
+        <p>We started with gates because a gate is the hardest thing on a property to get right. It is a structure, a machine and a piece of architecture at once. It hangs off one edge, moves every day and stands outside through every season. If it is a quarter inch out in July, it drags in January.</p>
+        <p>Learning to build gates that last taught us everything else: how to hold a twenty-foot frame flat, how to put down a weld that carries load and still looks good, how to finish steel so it survives a northern winter, and how to set a post so it never moves.</p>
+        <p>The business previously operated as {site.formerName}. Today we focus on what we do best: custom gates, the automation that runs them, and the metal fabrication that the same skills make possible.</p>
+        {site.owner.name && site.owner.note && (
+          <blockquote>
+            <p>{site.owner.note}</p>
+            <p class="tech mt-2 text-steel-500">{site.owner.name}{site.owner.role && `, ${site.owner.role}`}</p>
+          </blockquote>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <section class="surface-dark section">
+    <div class="wrap">
+      <p class="eyebrow text-ember-400">How we work</p>
+      <h2 class="h2 mt-4 max-w-2xl">Four habits we do not skip.</h2>
+      <ol class="mt-12 grid gap-px bg-white/10 md:grid-cols-2">
+        {principles.map(([t, b], i) => (
+          <li class="bg-ink-900 p-8 lg:p-10">
+            <span class="tech text-ember-400">0{i + 1}</span>
+            <p class="h3 mt-4">{t}</p>
+            <p class="mt-3 max-w-md text-steel-300">{b}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="surface-bone on-light section">
+    <div class="wrap grid gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <p class="eyebrow text-ember-600">Custom shop or catalog gate</p>
+        <h2 class="h2 mt-4">What you get from people who build it themselves.</h2>
+        <p class="mt-5 text-steel-500">Plenty of companies sell gates. Most order them. There is nothing wrong with that for a simple opening. It stops working when the site is anything other than flat, square and standard.</p>
+      </div>
+      <div class="lg:col-span-7">
+        <div class="grid grid-cols-[1fr_1fr] border-b border-ink-900 pb-3">
+          <p class="tech text-steel-500">Ordered from a catalog</p>
+          <p class="tech text-ember-600">Built in our shop</p>
+        </div>
+        {[
+          ['Standard widths and heights', 'Sized to your opening and your vehicles'],
+          ['Assumes level ground', 'Designed for your grade, swing or slide'],
+          ['One or two infill styles', 'Any infill, including your own artwork'],
+          ['Posts sized for an average gate', 'Posts and footings sized for this gate'],
+          ['Installed by whoever is available', 'Installed by the people who built it'],
+          ['A model number', 'A drawing with your name on it'],
+        ].map(([a, b]) => (
+          <div class="grid grid-cols-[1fr_1fr] gap-x-6 border-b border-ink-900/15 py-4">
+            <p class="text-steel-500">{a}</p>
+            <p class="font-[600]">{b}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="surface-paper on-light section-tight">
+    <div class="wrap grid gap-px bg-ink-900/15 md:grid-cols-3">
+      {[
+        ['/company/approach/', 'Our approach', 'How a project runs from first call to handover.'],
+        ['/company/capabilities/', 'Capabilities', 'What the shop can cut, form, weld and finish.'],
+        ['/service-area/', 'Service area', 'Where we work, and how we schedule it.'],
+      ].map(([href, t, b]) => (
+        <a href={href} class="group bg-paper p-8 no-underline hover:bg-white">
+          <p class="h3 group-hover:text-ember-600">{t}</p>
+          <p class="mt-2 text-steel-500">{b}</p>
+          <span class="mt-5 inline-block text-ember-600"><Icon name="arrow" /></span>
+        </a>
+      ))}
+    </div>
+  </section>
+  <RelatedLinks paths={['/gates/', '/fabrication/', '/projects/', '/company/design-engineering/', '/company/fabrication-process/', '/company/materials-finishes/']} heading="Go deeper" />
+</Base>

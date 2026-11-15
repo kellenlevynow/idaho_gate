@@ -1,0 +1,90 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import Drawing from '@/components/Drawing.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import FaqList from '@/components/FaqList.astro';
+import RelatedLinks from '@/components/RelatedLinks.astro';
+import TrustStrip from '@/components/TrustStrip.astro';
+import { site } from '@/site.config';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '@/lib/schema';
+
+export async function getStaticPaths() {
+  return (await getCollection('industries')).map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+const path = `/industries/${entry.id}/`;
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Industries', path: '/industries/' }, { name: d.navTitle || d.title, path }];
+const quoteHref = `/quote/?path=${d.inquiry}`;
+const schema = [breadcrumbSchema(crumbs), serviceSchema({ name: d.title, description: d.description, path }), ...(d.faqs.length ? [faqSchema(d.faqs)] : [])];
+---
+<Base title={d.seoTitle} description={d.description} schema={schema} service={`industry/${entry.id}`} cta={{ path: d.inquiry, context: `industry_${entry.id}` }}>
+  <section class="surface-dark grid-dark" data-track-location="industry_hero">
+    <div class="wrap grid items-center gap-10 py-10 lg:grid-cols-12 lg:gap-12 lg:py-16">
+      <div class="lg:col-span-6">
+        <Breadcrumbs crumbs={crumbs} />
+        <p class="eyebrow mt-8 text-ember-400">Industries</p>
+        <h1 class="display-sm mt-5">{d.title}</h1>
+        <p class="lede mt-6 max-w-xl text-steel-200">{d.lede}</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={quoteHref} class="btn btn-lg" data-cta="industry_quote">Request a quote <Icon name="arrow" /></a>
+          <a href={`tel:${site.contact.phoneTel}`} class="btn btn-lg btn-ghost-dark"><Icon name="phone" /> {site.contact.phoneDisplay}</a>
+        </div>
+        <div class="mt-8"><TrustStrip /></div>
+      </div>
+      {d.visual && (
+        <div class="lg:col-span-6">
+          <div class="sheet sheet-dark bg-ink-900"><Drawing kind={d.visual.kind} preset={d.visual.preset} theme="dark" /></div>
+          <p class="tech mt-3 text-steel-400">Concept drawing · not for construction</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  {d.needs.length > 0 && (
+    <section class="surface-bone on-light section-tight">
+      <div class="wrap">
+        <p class="eyebrow text-ember-600">What we build for you</p>
+        <ul class="mt-8 grid gap-px bg-ink-900/15 sm:grid-cols-2 lg:grid-cols-4">
+          {d.needs.map((n, i) => (
+            <li class="bg-bone">
+              <a href={n.href} class="group flex h-full flex-col p-6 no-underline transition-colors hover:bg-white">
+                <span class="tech text-ember-600">{String(i + 1).padStart(2, '0')}</span>
+                <span class="h4 mt-3 group-hover:text-ember-600">{n.title}</span>
+                <span class="mt-2 flex-1 text-[0.95rem] leading-relaxed text-steel-500">{n.body}</span>
+                <span class="mt-4 text-ember-600"><Icon name="arrow" /></span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <section class="surface-paper on-light section-tight">
+    <div class="wrap grid gap-12 lg:grid-cols-12">
+      <article class="prose-gate lg:col-span-7"><Content /></article>
+      <aside class="lg:col-span-4 lg:col-start-9">
+        <div class="surface-dark p-6 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]" data-track-location="industry_aside">
+          <p class="h3">Talk to the people who will build it.</p>
+          <p class="mt-2 text-[0.95rem] text-steel-300">Send the scope, plans or a few photos. We reply with questions, then a drawing and a written quote.</p>
+          <a href={quoteHref} class="btn mt-5 w-full" data-cta="industry_aside_quote">Start a quote <Icon name="arrow" /></a>
+          <a href={`tel:${site.contact.phoneTel}`} class="mt-4 flex items-center justify-center gap-2 font-[640] text-bone no-underline hover:text-ember-400"><Icon name="phone" /> {site.contact.phoneDisplay}</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  {d.faqs.length > 0 && (
+    <section class="surface-bone on-light section-tight">
+      <div class="wrap grid gap-10 lg:grid-cols-12">
+        <div class="lg:col-span-4"><p class="eyebrow text-ember-600">Questions</p><h2 class="h2 mt-4">Common questions.</h2></div>
+        <div class="lg:col-span-8"><FaqList faqs={d.faqs} /></div>
+      </div>
+    </section>
+  )}
+  <RelatedLinks paths={d.related} tone="light" />
+</Base>

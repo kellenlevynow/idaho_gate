@@ -2,7 +2,7 @@
 title: Architectural metalwork
 navTitle: Architectural metalwork
 seoTitle: Architectural metalwork and custom steel features
-description: Architectural metalwork in North Idaho. Entry canopies, arches, trellises, fireplace surrounds, steel stairs and exposed steel features, designed and fabricated to order.
+description: Architectural metalwork in North Idaho. Entry canopies, arches, trellises, fireplace surrounds, steel stairs and exposed steel, built to order.
 summary: Canopies, entry arches, trellises, stairs and steel features that are part of the architecture.
 lede: Architectural metalwork is the steel you are meant to see. It has to carry load like structure and look good from a foot away.
 division: fabrication

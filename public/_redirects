@@ -1,0 +1,14 @@
+# Old Squarespace URLs from idahofortifiedgate.com.
+# These only matter if the old domain is pointed at this site (see README).
+/custom-gates      /gates/                 301
+/our-story         /company/about/         301
+/contact-us-1      /contact/               301
+/contact-us        /contact/               301
+/iron-works        /fabrication/           301
+/fencing           /gates/                 301
+# Friendly aliases
+/gallery           /projects/              301
+/about             /company/about/         301
+/process           /company/approach/      301
+/guides/*          /resources/:splat       301
+/service-areas/*   /service-area/:splat    301

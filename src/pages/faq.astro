@@ -1,0 +1,57 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import FaqList from '@/components/FaqList.astro';
+import RelatedLinks from '@/components/RelatedLinks.astro';
+import { getServices } from '@/lib/content';
+import { breadcrumbSchema, faqSchema } from '@/lib/schema';
+
+const services = await getServices();
+const guides = await getCollection('guides');
+const take = (list: { data: { faqs: { q: string; a: string }[] } }[], n: number) => list.flatMap((e) => e.data.faqs.slice(0, n));
+const guide = (id: string) => guides.filter((g) => g.id === id);
+const svc = (division: string, group?: string) => services.filter((s) => s.data.division === division && (!group || s.data.group === group));
+const one = (slug: string) => services.filter((s) => s.id.endsWith(`/${slug}`));
+
+const groups = [
+  { id: 'choosing', title: 'Choosing a gate', faqs: [...take(one('driveway-gates'), 3), ...take(one('swing-gates'), 2), ...take(one('sliding-gates'), 3), ...take(guide('gate-design-guide'), 2), ...take(one('estate-gates'), 2)] },
+  { id: 'automation', title: 'Automation and access', faqs: [...take(svc('automation'), 2), ...take(guide('gate-automation-guide'), 2)] },
+  { id: 'planning', title: 'Cost, permits and planning', faqs: [...take(guide('custom-gate-cost'), 3), ...take(guide('permits-hoa-and-fire-access'), 3), ...take(guide('what-to-expect-during-install'), 2), ...take(one('pillars-and-columns'), 1)] },
+  { id: 'winter', title: 'Winter and upkeep', faqs: [...take(guide('gates-in-snow-and-ice'), 3), ...take(guide('gate-maintenance-checklist'), 2), ...take(one('gate-repairs-and-upgrades'), 3)] },
+  { id: 'fabrication', title: 'Metal fabrication', faqs: [...take(svc('fabrication'), 1), ...take(guide('working-with-a-fabrication-shop'), 2)] },
+];
+// de-duplicate by question text
+const seen = new Set<string>();
+for (const g of groups) g.faqs = g.faqs.filter((f) => (seen.has(f.q) ? false : (seen.add(f.q), true)));
+const all = groups.flatMap((g) => g.faqs);
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'FAQ', path: '/faq/' }];
+---
+<Base
+  title="Gate and fabrication questions, answered"
+  description={`Straight answers to ${all.length} common questions about custom gates, automation, cost, permits, winter operation, maintenance and metal fabrication in North Idaho.`}
+  schema={[breadcrumbSchema(crumbs), faqSchema(all)]}
+>
+  <section class="surface-dark grid-dark">
+    <div class="wrap py-10 lg:py-16">
+      <Breadcrumbs crumbs={crumbs} />
+      <p class="eyebrow mt-8 text-ember-400">Frequently asked questions</p>
+      <h1 class="display-sm mt-5 max-w-4xl">{all.length} questions. Straight <span class="serif-accent text-ember-400">answers.</span></h1>
+      <p class="lede mt-6 max-w-2xl text-steel-200">Collected from our service pages and guides. If yours is not here, call or send a note and we will answer it directly.</p>
+      <ul class="mt-8 flex flex-wrap gap-2">
+        {groups.map((g) => <li><a class="tech inline-flex min-h-[2.6rem] items-center border border-white/25 px-4 text-bone no-underline hover:border-ember-400" href={`#${g.id}`}>{g.title} <span class="ml-2 opacity-60">{g.faqs.length}</span></a></li>)}
+      </ul>
+    </div>
+  </section>
+  <section class="surface-paper on-light section-tight">
+    <div class="wrap">
+      {groups.map((g) => (
+        <div id={g.id} class="grid gap-8 border-t border-ink-900 py-12 lg:grid-cols-12">
+          <div class="lg:col-span-4"><h2 class="h2 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]">{g.title}</h2></div>
+          <div class="lg:col-span-8"><FaqList faqs={g.faqs} /></div>
+        </div>
+      ))}
+    </div>
+  </section>
+  <RelatedLinks paths={['/resources/gate-design-guide/', '/resources/custom-gate-cost/', '/resources/gate-automation-guide/', '/resources/gates-in-snow-and-ice/', '/resources/permits-hoa-and-fire-access/', '/resources/']} heading="Read the full guides" />
+</Base>

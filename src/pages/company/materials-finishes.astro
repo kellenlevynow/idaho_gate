@@ -1,0 +1,153 @@
+---
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import PageHero from '@/components/PageHero.astro';
+import ConceptRender from '@/components/ConceptRender.astro';
+import RelatedLinks from '@/components/RelatedLinks.astro';
+import { finishes } from '@/three/finish-data';
+import { breadcrumbSchema } from '@/lib/schema';
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Company', path: '/company/about/' }, { name: 'Materials and finishes', path: '/company/materials-finishes/' }];
+const detail: Record<string, { best: string; care: string }> = {
+  'matte-black': { best: 'Almost any gate. The default for good reason.', care: 'Wash yearly. Touch up chips before rust creeps under.' },
+  'dark-bronze': { best: 'Timber homes, stone pillars, ranch entrances.', care: 'Same as any powder coat.' },
+  weathering: { best: 'Panels and slats on modern and rural properties.', care: 'None. Plan for runoff staining in the first seasons.' },
+  galvanized: { best: 'Commercial, agricultural and hard-service steel.', care: 'None. Dulls from bright to matte gray over time.' },
+  graphite: { best: 'Modern homes with glass, concrete and dark siding.', care: 'Same as any powder coat.' },
+};
+const layers = [
+  ['Steel', 'Blasted to a clean, slightly rough profile so coatings grip.'],
+  ['Zinc-rich primer', 'Sacrificial protection. If the top coat is breached, zinc corrodes before the steel does.'],
+  ['Powder top coat', 'A baked film that gives color, texture and the first line of defense.'],
+];
+---
+<Base
+  title="Materials and finishes"
+  description="The steel, aluminum and finish systems Idaho Gate Co. uses, and how each holds up in North Idaho. Powder coat, galvanizing and weathering steel."
+  schema={[breadcrumbSchema(crumbs)]}
+>
+  <PageHero crumbs={crumbs} tone="black" eyebrow="Materials and finishes" title={`Chosen for the weather it stands <span class="serif-accent text-ember-400">in.</span>`} lede="North Idaho gives steel freeze and thaw, months of snow contact, de-icing salt and strong summer sun. Material and finish are picked to survive that, then to look good doing it.">
+    <div slot="visual" data-finishes>
+      <div class="sheet sheet-dark relative aspect-[4/3] overflow-hidden bg-ink-900">
+        {finishes.map((f, i) => (
+          <div class="finish-shot absolute inset-0 transition-opacity duration-500" data-shot={f.key} style={i === 0 ? '' : 'opacity:0'}>
+            <ConceptRender name={`finish-${f.key}`} alt={`Close concept view of a gate panel in ${f.name.toLowerCase()}`} class="h-full" eager={i === 0} tag={i === 0} sizes="(min-width: 1024px) 45vw, 100vw" />
+          </div>
+        ))}
+      </div>
+      <div class="mt-4 flex flex-wrap gap-2" role="group" aria-label="Choose a finish to preview">
+        {finishes.map((f, i) => (
+          <button type="button" class="finish-btn" aria-pressed={i === 0 ? 'true' : 'false'} data-finish={f.key}>
+            <span class="h-4 w-4 flex-none border border-white/40" style={`background:${f.swatch}`}></span>{f.name.replace(' powder coat', '')}
+          </button>
+        ))}
+      </div>
+    </div>
+  </PageHero>
+
+  <section class="surface-paper on-light section">
+    <div class="wrap">
+      <p class="eyebrow text-ember-600">Standard finishes</p>
+      <h2 class="h2 mt-4 max-w-3xl">Five finishes we stand behind.</h2>
+      <div class="mt-10 overflow-x-auto">
+        <table class="w-full min-w-[46rem] border-collapse text-left">
+          <thead>
+            <tr class="border-b border-ink-900">
+              {['Finish', 'What it is', 'Best for', 'Upkeep'].map((h) => <th class="tech py-3 pr-6 font-[500] text-steel-500">{h}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {finishes.map((f) => (
+              <tr class="border-b border-ink-900/15 align-top">
+                <th class="py-5 pr-6 font-[640] [font-stretch:106%]"><span class="flex items-center gap-3"><span class="h-6 w-6 flex-none border border-ink-900/30" style={`background:${f.swatch}`}></span>{f.name}</span></th>
+                <td class="py-5 pr-6 text-steel-500">{f.note}</td>
+                <td class="py-5 pr-6">{detail[f.key].best}</td>
+                <td class="py-5 text-steel-500">{detail[f.key].care}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-6 max-w-2xl text-steel-500">Other powder colors are available. For the longest life on steel that sees salt or abuse, galvanizing under powder coat combines both systems.</p>
+      <a href="/studio/" class="btn mt-8" data-cta="finishes_studio">Compare finishes on a 3D gate <Icon name="arrow" /></a>
+    </div>
+  </section>
+
+  <section class="surface-dark section">
+    <div class="wrap grid items-center gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <p class="eyebrow text-ember-400">The finish system</p>
+        <h2 class="h2 mt-4">Three layers. The one you see matters least.</h2>
+        <p class="mt-5 text-steel-300">Most coating failures start underneath. Powder sprayed over mill scale looks perfect on day one and lets go in sheets a few winters later. We build the system from the steel up.</p>
+      </div>
+      <div class="lg:col-span-6 lg:col-start-7">
+        <svg viewBox="0 0 560 300" class="h-auto w-full" role="img" aria-label="Cross-section diagram of a coating system: blasted steel, zinc-rich primer, powder top coat">
+          <rect width="560" height="300" fill="#131415" />
+          <path d="M40 205 l12 -7 l10 8 l11 -9 l12 8 l10 -7 l12 8 l11 -9 l10 8 l12 -7 l11 8 l10 -9 l12 8 l11 -7 l10 8 l12 -9 l11 8 l10 -7 l12 8 l11 -9 l10 8 l12 -7 l11 8 l10 -9 l12 8 l11 -7 l10 8 l12 -9 l11 8 l10 -7 V270 H40 Z" fill="#3b3e42" stroke="#e9e6dc" stroke-width="1" />
+          <path d="M40 205 l12 -7 l10 8 l11 -9 l12 8 l10 -7 l12 8 l11 -9 l10 8 l12 -7 l11 8 l10 -9 l12 8 l11 -7 l10 8 l12 -9 l11 8 l10 -7 l12 8 l11 -9 l10 8 l12 -7 l11 8 l10 -9 l12 8 l11 -7 l10 8 l12 -9 l11 8 l10 -7 V168 H40 Z" fill="#8d929a" opacity="0.9" />
+          <rect x="40" y="118" width="325" height="50" fill="#1d1e20" stroke="#e9e6dc" stroke-width="1" />
+          <g font-family="'IBM Plex Mono',monospace" font-size="11" letter-spacing="1.2" fill="#e9e6dc">
+            <line x1="365" y1="143" x2="400" y2="143" stroke="#e0703a" /><text x="408" y="147">POWDER TOP COAT</text>
+            <line x1="365" y1="186" x2="400" y2="186" stroke="#e0703a" /><text x="408" y="190">ZINC-RICH PRIMER</text>
+            <line x1="365" y1="240" x2="400" y2="240" stroke="#e0703a" /><text x="408" y="244">BLASTED STEEL</text>
+            <text x="40" y="100" fill="#8d929a">CROSS-SECTION · NOT TO SCALE</text>
+          </g>
+        </svg>
+        <ol class="mt-6 space-y-4">
+          {layers.map(([t, b], i) => (
+            <li class="grid grid-cols-[2.5rem_1fr] border-t border-white/12 pt-4"><span class="tech pt-1 text-ember-400">0{i + 1}</span><span><span class="font-[640] [font-stretch:108%]">{t}.</span> <span class="text-steel-300">{b}</span></span></li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="surface-bone on-light section">
+    <div class="wrap">
+      <p class="eyebrow text-ember-600">Materials</p>
+      <h2 class="h2 mt-4 max-w-3xl">What we build with, and when we reach for each.</h2>
+      <div class="mt-10 grid gap-px bg-ink-900/15 md:grid-cols-2 lg:grid-cols-4">
+        {[
+          ['Mild steel', 'The default. Strong, stiff, weldable and economical. Tube for frames, bar for pickets, plate for panels and brackets. Needs a finish.'],
+          ['Aluminum', 'A third the weight and no rust. For wide leaves, solar gates, railings and anything near water. Sections are sized up for stiffness.'],
+          ['Weathering steel', 'Forms a stable patina and needs no coating. For feature panels and slats where runoff can be managed.'],
+          ['Stainless', 'For cable rail, fasteners and accents. Used where its corrosion resistance earns its cost.'],
+        ].map(([t, b], i) => (
+          <div class="bg-bone p-6">
+            <span class="tech text-ember-600">0{i + 1}</span>
+            <p class="h3 mt-3">{t}</p>
+            <p class="mt-2 text-[0.95rem] leading-relaxed text-steel-500">{b}</p>
+          </div>
+        ))}
+      </div>
+      <div class="prose-gate mt-12">
+        <h2>Details that protect the finish</h2>
+        <ul>
+          <li><strong>Drain holes</strong> at the low point of every tube, so water that gets in can get out before it freezes.</li>
+          <li><strong>Sealed joints</strong> on exterior tube, so less water gets in to begin with.</li>
+          <li><strong>Eased edges.</strong> Coatings pull thin on sharp corners. Rounding them lets the film build.</li>
+          <li><strong>Isolation</strong> between aluminum and steel, and stainless fasteners where metals meet.</li>
+          <li><strong>Ground clearance</strong> to keep the bottom rail out of standing water and packed snow.</li>
+        </ul>
+        <p>For a side-by-side comparison written for owners, read the <a href="/resources/materials-guide/">materials guide</a>.</p>
+      </div>
+    </div>
+  </section>
+  <RelatedLinks paths={['/resources/materials-guide/', '/company/fabrication-process/', '/fabrication/aluminum-fabrication/', '/gates/modern-gates/', '/resources/gate-maintenance-checklist/', '/studio/']} heading="Related" tone="light" />
+</Base>
+
+<script>
+  const root = document.querySelector('[data-finishes]');
+  if (root) {
+    const shots = [...root.querySelectorAll<HTMLElement>('[data-shot]')];
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-finish]')];
+    buttons.forEach((b) => b.addEventListener('click', () => {
+      buttons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      shots.forEach((s) => (s.style.opacity = s.dataset.shot === b.dataset.finish ? '1' : '0'));
+    }));
+  }
+</script>
+<style is:global>
+  .finish-btn { display: inline-flex; align-items: center; gap: 0.55rem; min-height: 2.6rem; padding: 0.45rem 0.8rem; font-size: 0.85rem; font-weight: 560; color: var(--color-steel-200); border: 1px solid rgb(255 255 255 / 0.2); background: none; cursor: pointer; transition: all 0.15s; }
+  .finish-btn:hover { border-color: rgb(255 255 255 / 0.5); }
+  .finish-btn[aria-pressed='true'] { border-color: var(--color-ember-400); color: var(--color-bone); box-shadow: inset 0 0 0 1px var(--color-ember-400); }
+</style>

@@ -1,0 +1,106 @@
+---
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import PageHero from '@/components/PageHero.astro';
+import ConceptRender from '@/components/ConceptRender.astro';
+import Drawing from '@/components/Drawing.astro';
+import RelatedLinks from '@/components/RelatedLinks.astro';
+import { breadcrumbSchema } from '@/lib/schema';
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Company', path: '/company/about/' }, { name: 'Fabrication process', path: '/company/fabrication-process/' }];
+const stages = [
+  { t: 'Cut list', d: 'The approved drawing becomes a list of every piece: length, angle, hole and profile. Plate parts are nested to waste as little sheet as possible.', why: 'A complete list means nothing is improvised at the bench.' },
+  { t: 'Cut', d: 'Tube and bar go to the saw. Plate goes to the CNC plasma table, which cuts panels, gussets, base plates and artwork straight from the drawing file.', why: 'CNC parts are identical every time, so the second leaf matches the first.' },
+  { t: 'Prep', d: 'Ends are coped or mitered so joints close tight. Mill scale is cleaned back where welds will go. Drain holes are drilled now, not after.', why: 'Tight, clean joints make stronger welds with less distortion.' },
+  { t: 'Fit-up', d: 'The frame is laid out on a flat fixture, squared corner to corner and clamped. Infill is spaced with gauge blocks. Everything is tacked, then checked again.', why: 'Square on the table is the only way to be square on the post.' },
+  { t: 'Weld', d: 'Joints are welded in a planned sequence, alternating sides and working from the center out, so heat pulls the frame evenly.', why: 'Steel moves when it is welded. Sequence decides whether it moves back.' },
+  { t: 'Dress', d: 'Spatter is removed and sharp edges are broken. Welds are left as clean beads or ground flush, as the design calls for.', why: 'Coatings fail first on sharp edges and spatter. Remove both and the finish lasts.' },
+  { t: 'Trial fit', d: 'Hinges, rollers, latches and operator brackets are mounted and the gate is swung or rolled in the shop.', why: 'Finding a clash in the shop costs minutes. Finding it on site costs a day.' },
+  { t: 'Finish', d: 'The piece is blasted or otherwise prepared, primed and coated, or sent to be galvanized first.', why: 'Preparation decides how long a finish lasts. The top coat mostly decides the color.' },
+  { t: 'Final assembly and check', d: 'Hardware goes back on. Dimensions are checked against the drawing. The piece is wrapped for transport.', why: 'What leaves the shop should hang without a grinder.' },
+];
+---
+<Base
+  title="Fabrication process: cut, fit, weld, finish"
+  description="How Idaho Gate Co. fabricates a gate. Nine shop stages from cut list and CNC cutting through fit-up, weld sequence, trial fit and finish."
+  schema={[breadcrumbSchema(crumbs)]}
+>
+  <PageHero crumbs={crumbs} eyebrow="Fabrication process" title={`Cut, fit, weld, <span class="serif-accent text-ember-400">finish.</span>`} lede="A gate is only as good as the least careful step in building it. Here is every stage a job goes through in the shop, and the reason for each.">
+    <div slot="visual">
+      <ConceptRender name="estate-ridgeline-exploded" alt="Exploded concept view showing the separate assemblies of a gate: top rails, pickets, frames, panels, posts, footings and pillars" class="sheet sheet-dark overflow-hidden" eager />
+      <p class="tech mt-3 text-steel-400">Each assembly is built on its own, then brought together · concept</p>
+    </div>
+  </PageHero>
+
+  <section class="surface-paper on-light section">
+    <div class="wrap">
+      <div class="grid gap-10 lg:grid-cols-12">
+        <div class="lg:col-span-4">
+          <div class="lg:sticky lg:top-[calc(var(--header-h)+2rem)]">
+            <p class="eyebrow text-ember-600">In the shop</p>
+            <h2 class="h2 mt-4">Nine stages. None optional.</h2>
+            <p class="mt-5 text-steel-500">Skipping a stage rarely shows on the day a gate is hung. It shows in the third winter.</p>
+            <a href="/company/capabilities/" class="link-arrow mt-6">What the shop can handle <Icon name="arrow" /></a>
+          </div>
+        </div>
+        <ol class="lg:col-span-8">
+          {stages.map((s, i) => (
+            <li class="grid gap-x-8 gap-y-2 border-t border-ink-900/15 py-7 sm:grid-cols-[5rem_1fr]" data-reveal>
+              <span class="font-mono text-[2rem] font-[500] leading-none text-ember-600">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h3 class="h3">{s.t}</h3>
+                <p class="mt-2 max-w-2xl text-[1.05rem] leading-relaxed">{s.d}</p>
+                <p class="mt-3 flex max-w-2xl gap-3 border-l-2 border-ember-600 pl-4 text-[0.95rem] text-steel-500"><span><span class="tech mr-2 text-ink-900">Why</span>{s.why}</span></p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="surface-dark section">
+    <div class="wrap grid gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <p class="eyebrow text-ember-400">What a good weld is</p>
+        <h2 class="h2 mt-4">Strength first. Looks second. Both, on the visible side.</h2>
+      </div>
+      <div class="lg:col-span-6 lg:col-start-7">
+        <ul class="space-y-6">
+          {[
+            ['Fused, not stacked', 'A weld has to melt into both pieces. A neat bead sitting on top of cold steel is decoration.'],
+            ['The right size', 'Big enough to carry the load. Oversized welds add heat and distortion without adding useful strength.'],
+            ['Continuous where water could get in', 'Stitch welds leave gaps. On exterior tube, we seal joints so water cannot enter and freeze.'],
+            ['Consistent', 'Even ripple and width along the joint is a sign of steady heat and travel speed.'],
+            ['Clean', 'No spatter, undercut or pinholes for rust to start in.'],
+          ].map(([t, b]) => (
+            <li class="grid grid-cols-[auto_1fr] gap-x-4 border-t border-white/12 pt-5">
+              <span class="mt-1 text-ember-400"><Icon name="check" /></span>
+              <div><p class="font-[640] [font-stretch:108%]">{t}</p><p class="mt-1 text-steel-300">{b}</p></div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="surface-bone on-light section">
+    <div class="wrap grid items-center gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-6">
+        <div class="sheet bg-white"><Drawing kind="fab" preset="screen" theme="light" /></div>
+        <p class="tech mt-3 text-steel-500">Concept cut pattern · drawn in-house, cut on the CNC table</p>
+      </div>
+      <div class="prose-gate lg:col-span-5 lg:col-start-8">
+        <h2>From artwork to steel</h2>
+        <p>Cut panels follow the same path as structural parts, with two extra checks.</p>
+        <ol>
+          <li><strong>Draw for cutting.</strong> Every shape stays attached to the sheet. Fine detail is simplified to what plate will hold.</li>
+          <li><strong>Proof at scale.</strong> You see the pattern at real size before it is cut.</li>
+          <li><strong>Sequence the cut.</strong> The order of cuts spreads heat so the sheet stays flat.</li>
+          <li><strong>Clean the edges.</strong> Dross comes off and edges are eased so coating wraps them.</li>
+        </ol>
+        <p>See what is possible under <a href="/fabrication/privacy-screens-and-decorative-panels/">screens and decorative panels</a>.</p>
+      </div>
+    </div>
+  </section>
+  <RelatedLinks paths={['/company/materials-finishes/', '/company/capabilities/', '/company/design-engineering/', '/fabrication/general-fabrication/', '/resources/working-with-a-fabrication-shop/', '/resources/what-to-expect-during-install/']} heading="Related" tone="light" />
+</Base>

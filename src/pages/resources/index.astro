@@ -1,0 +1,59 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import Drawing from '@/components/Drawing.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { breadcrumbSchema } from '@/lib/schema';
+const guides = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Resources', path: '/resources/' }];
+const [lead, ...rest] = guides;
+---
+<Base
+  title="Gate and fabrication guides"
+  description="Practical guides from Idaho Gate Co. on choosing, automating, permitting and maintaining a custom gate, and on working with a metal fabrication shop."
+  schema={[breadcrumbSchema(crumbs)]}
+>
+  <section class="surface-bone on-light">
+    <div class="wrap py-10 lg:py-16">
+      <Breadcrumbs crumbs={crumbs} tone="light" />
+      <p class="eyebrow mt-8 text-ember-600">Articles and guides</p>
+      <h1 class="display-sm mt-5 max-w-4xl">Read this before you ask anyone for a <span class="serif-accent text-ember-600">quote.</span></h1>
+      <p class="lede mt-6 max-w-2xl text-ink-800">Written from the shop floor. No sales pitch, just the questions that decide whether a gate works in year fifteen.</p>
+    </div>
+  </section>
+
+  <section class="surface-paper on-light section-tight">
+    <div class="wrap">
+      <a href={`/resources/${lead.id}/`} class="group grid items-center gap-8 no-underline lg:grid-cols-2">
+        <div class="sheet bg-white"><Drawing kind={lead.data.visual!.kind} preset={lead.data.visual!.preset} theme="light" decorative /></div>
+        <div>
+          <p class="tech text-ember-600">Start here · {lead.data.category} · {lead.data.readMinutes} min</p>
+          <h2 class="h2 mt-3 group-hover:text-ember-600">{lead.data.title}</h2>
+          <p class="mt-4 text-[1.05rem] text-steel-500">{lead.data.lede}</p>
+          <span class="link-arrow mt-6">Read the guide <Icon name="arrow" /></span>
+        </div>
+      </a>
+      <ul class="mt-14 grid gap-px bg-ink-900/15 sm:grid-cols-2 lg:grid-cols-3">
+        {rest.map((g) => (
+          <li class="bg-paper">
+            <a href={`/resources/${g.id}/`} class="group flex h-full flex-col p-6 no-underline transition-colors hover:bg-white">
+              <span class="tech text-steel-500">{g.data.category} · {g.data.readMinutes} min</span>
+              <span class="h3 mt-3 group-hover:text-ember-600">{g.data.navTitle}</span>
+              <span class="mt-2 flex-1 text-[0.95rem] leading-snug text-steel-500">{g.data.summary}</span>
+              <span class="mt-5 text-ember-600"><Icon name="arrow" /></span>
+            </a>
+          </li>
+        ))}
+        <li class="bg-ink-900 text-bone">
+          <a href="/faq/" class="group flex h-full flex-col p-6 no-underline">
+            <span class="tech text-ember-400">Quick answers</span>
+            <span class="h3 mt-3 group-hover:text-ember-400">Frequently asked questions</span>
+            <span class="mt-2 flex-1 text-[0.95rem] leading-snug text-steel-300">Design, automation, permits, winter and upkeep, in one place.</span>
+            <span class="mt-5 text-ember-400"><Icon name="arrow" /></span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+</Base>

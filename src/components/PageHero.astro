@@ -1,0 +1,19 @@
+---
+import Breadcrumbs from './Breadcrumbs.astro';
+import type { Crumb } from '@/lib/schema';
+interface Props { crumbs: Crumb[]; eyebrow: string; title: string; lede: string; tone?: 'dark' | 'black'; location?: string }
+const { crumbs, eyebrow, title, lede, tone = 'dark', location = 'page_hero' } = Astro.props;
+const hasVisual = Astro.slots.has('visual');
+---
+<section class:list={[tone === 'black' ? 'surface-black' : 'surface-dark', 'grid-dark']} data-track-location={location}>
+  <div class:list={['wrap grid items-center gap-10 py-10 lg:gap-12 lg:py-16', hasVisual && 'lg:grid-cols-12']}>
+    <div class={hasVisual ? 'lg:col-span-6' : ''}>
+      <Breadcrumbs crumbs={crumbs} />
+      <p class="eyebrow mt-8 text-ember-400">{eyebrow}</p>
+      <h1 class="display-sm mt-5 max-w-4xl" set:html={title} />
+      <p class="lede mt-6 max-w-2xl text-steel-200">{lede}</p>
+      <slot name="actions" />
+    </div>
+    {hasVisual && <div class="lg:col-span-6"><slot name="visual" /></div>}
+  </div>
+</section>

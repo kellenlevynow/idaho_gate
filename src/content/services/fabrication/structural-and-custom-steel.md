@@ -2,7 +2,7 @@
 title: Custom and structural steel fabrication
 navTitle: Custom steel fabrication
 seoTitle: Custom steel fabrication in North Idaho
-description: Custom steel fabrication for builders and owners in North Idaho. Posts, beams, base plates, embeds, frames and brackets built to drawings and engineer's details.
+description: Custom steel fabrication for builders and owners in North Idaho. Posts, beams, base plates, embeds and frames built to the engineer's details.
 summary: Posts, beams, plates, embeds and frames built to drawings and an engineer's details.
 lede: Custom homes and small commercial buildings are full of steel that nobody stocks. A moment frame for a window wall. A flitch plate. A post base with a bolt pattern that exists on one sheet of one set of plans.
 division: fabrication

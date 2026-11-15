@@ -53,6 +53,8 @@ export async function titleIndex(): Promise<Record<string, { title: string; summ
     ['/automation/', 'Automation and access', 'Operators, access control and safety.'],
     ['/fabrication/', 'Metal fabrication', 'Steel and aluminum work beyond gates.'],
     ['/contact/', 'Contact', 'Call, write or send a quick note.'],
+    ['/resources/', 'All guides', 'Planning, design, automation and upkeep, written from the shop floor.'],
+    ['/industries/', 'Industries', 'Who we build for.'],
   ];
   for (const [p, title, summary] of statics) idx[p] = { title, summary, kind: 'Page' };
   return idx;

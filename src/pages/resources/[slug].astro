@@ -1,0 +1,83 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import Drawing from '@/components/Drawing.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import FaqList from '@/components/FaqList.astro';
+import RelatedLinks from '@/components/RelatedLinks.astro';
+import { site } from '@/site.config';
+import { articleSchema, breadcrumbSchema, faqSchema } from '@/lib/schema';
+
+export async function getStaticPaths() {
+  return (await getCollection('guides')).map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content, headings } = await render(entry);
+const toc = headings.filter((h) => h.depth === 2);
+const path = `/resources/${entry.id}/`;
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Resources', path: '/resources/' }, { name: d.navTitle || d.title, path }];
+const schema = [breadcrumbSchema(crumbs), articleSchema({ title: d.title, description: d.description, path, updated: d.updated }), ...(d.faqs.length ? [faqSchema(d.faqs)] : [])];
+const updated = new Date(`${d.updated}T12:00:00Z`).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+const isFab = d.category === 'Fabrication';
+---
+<Base title={d.seoTitle} description={d.description} schema={schema} service={`guide/${entry.id}`} cta={{ path: isFab ? 'fabrication' : 'gates', context: `guide_${entry.id}`, heading: 'Ready to put this<br />to use?' }}>
+  <section class="surface-bone on-light" data-track-location="guide_hero">
+    <div class="wrap grid gap-10 py-10 lg:grid-cols-12 lg:gap-14 lg:py-16">
+      <div class="lg:col-span-7">
+        <Breadcrumbs crumbs={crumbs} tone="light" />
+        <p class="eyebrow mt-8 text-ember-600">{d.category} guide</p>
+        <h1 class="h2 mt-4 max-w-3xl" style="font-size:clamp(2.1rem,4.4vw,3.9rem)">{d.title}</h1>
+        <p class="lede mt-6 max-w-2xl text-ink-800">{d.lede}</p>
+        <p class="tech mt-6 text-steel-500">{d.readMinutes} minute read · Updated {updated} · By {site.name}</p>
+      </div>
+      {d.takeaways.length > 0 && (
+        <div class="lg:col-span-5">
+          <div class="sheet bg-white p-6 sm:p-7">
+            <p class="tech text-steel-500">The short version</p>
+            <ul class="mt-4 space-y-3">
+              {d.takeaways.map((t) => (
+                <li class="flex gap-3 text-[0.98rem] leading-snug"><span class="mt-1 text-ember-600"><Icon name="check" size={14} /></span>{t}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="surface-paper on-light section-tight">
+    <div class="wrap grid gap-12 lg:grid-cols-12">
+      <aside class="hidden lg:col-span-3 lg:block">
+        <nav class="sticky top-[calc(var(--header-h)+1.5rem)]" aria-label="On this page">
+          <p class="tech text-steel-500">On this page</p>
+          <ol class="mt-3 border-l border-ink-900/15">
+            {toc.map((h) => <li><a class="block border-l border-transparent py-1.5 pl-4 text-[0.9rem] leading-snug text-steel-500 no-underline hover:border-ember-600 hover:text-ink-900 -ml-px" href={`#${h.slug}`}>{h.text}</a></li>)}
+          </ol>
+          <a href="/quote/" class="btn btn-sm mt-6" data-cta="guide_toc_quote">Request a quote</a>
+        </nav>
+      </aside>
+      <article class="lg:col-span-8 lg:col-start-5">
+        {d.visual && (
+          <figure class="mb-10">
+            <div class="sheet bg-white"><Drawing kind={d.visual.kind} preset={d.visual.preset} view={d.visual.view === 'plan' ? 'plan' : 'elevation'} theme="light" /></div>
+            <figcaption class="tech mt-3 text-steel-500">Concept {d.visual.view === 'plan' ? 'plan' : 'drawing'} for illustration · not for construction</figcaption>
+          </figure>
+        )}
+        <div class="prose-gate"><Content /></div>
+        <p class="mt-10 border-t border-ink-900/15 pt-5 text-[0.85rem] leading-relaxed text-steel-500">This guide gives general information to help you plan. Codes, standards and local rules change and vary by jurisdiction. Confirm requirements with the relevant authority and follow manufacturer instructions for any equipment.</p>
+      </article>
+    </div>
+  </section>
+
+  {d.faqs.length > 0 && (
+    <section class="surface-bone on-light section-tight">
+      <div class="wrap grid gap-10 lg:grid-cols-12">
+        <div class="lg:col-span-4"><p class="eyebrow text-ember-600">Questions</p><h2 class="h2 mt-4">Related questions.</h2><a href="/faq/" class="link-arrow mt-6">All questions <Icon name="arrow" /></a></div>
+        <div class="lg:col-span-8"><FaqList faqs={d.faqs} /></div>
+      </div>
+    </section>
+  )}
+  <RelatedLinks paths={d.related} tone="light" />
+</Base>

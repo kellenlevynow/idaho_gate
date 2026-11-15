@@ -250,7 +250,6 @@ export class GateObject {
   private movers: Partial<Record<string, THREE.Group>> = {};
   private acts: { def: GateModel['actuators'][number]; group: THREE.Group; rod: THREE.Object3D; len0: number }[] = [];
   private geos: THREE.BufferGeometry[] = [];
-  private explodeT = 0;
   openT = 0;
 
   constructor(public model: GateModel, private set: MaterialSet, opts: { shadows?: boolean; lines?: boolean } = {}) {
@@ -392,7 +391,6 @@ export class GateObject {
 
   /** 0 = assembled, 1 = fully exploded along each part's assembly axis. */
   setExplode(t: number) {
-    this.explodeT = t;
     for (const p of this.parts) {
       const e = p.part.explode;
       p.group.position.set(e[0] * t, e[1] * t, e[2] * t);

@@ -2,7 +2,7 @@
 title: Access control, keypads and intercoms
 navTitle: Access control
 seoTitle: Gate keypads, intercoms and app access
-description: Gate access control in North Idaho. Keypads, video intercoms, smartphone and Wi-Fi control, remotes, vehicle sensors and guest codes set up around how you live.
+description: Gate access control in North Idaho. Keypads, video intercoms, smartphone control, remotes, exit sensors and guest codes set up around how you live.
 summary: Keypads, intercoms, app control and sensors that decide who gets in and how.
 lede: The operator moves the gate. Access control decides when. Get it right and family, guests, deliveries and emergency crews all get through without a phone call to you.
 division: automation

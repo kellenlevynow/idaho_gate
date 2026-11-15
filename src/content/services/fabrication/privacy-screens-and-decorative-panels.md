@@ -2,7 +2,7 @@
 title: Privacy screens and decorative metal panels
 navTitle: Screens and decorative panels
 seoTitle: Metal privacy screens and cut steel panels
-description: CNC-cut steel and aluminum privacy screens, decorative panels and metal art in North Idaho. Custom patterns for gates, fences, decks, facades and interiors.
+description: CNC-cut steel and aluminum privacy screens, decorative panels and metal art in North Idaho. Custom patterns for gates, fences, decks and facades.
 summary: CNC-cut steel and aluminum panels for privacy, shade, signage and pattern.
 lede: A sheet of plate and a cutting table can make almost any pattern. The craft is in choosing one that suits the place, holds together structurally and still looks right in ten winters.
 division: fabrication

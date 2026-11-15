@@ -2,7 +2,7 @@
 title: Custom railings and handrails
 navTitle: Railings and handrails
 seoTitle: Custom steel railings and handrails
-description: Custom steel and aluminum railings, stair rails and handrails in North Idaho. Cable, picket, glass-ready and horizontal bar designs built to code and fit on site.
+description: Custom steel and aluminum railings, stair rails and handrails in North Idaho. Cable, picket and horizontal bar designs built to code and fit on site.
 summary: Deck, stair and balcony railings in steel and aluminum, built to code and fit to the structure.
 lede: A railing is the piece of metalwork you put your hand on. It has to pass inspection, survive a snow load sliding off the roof, and feel solid every time you lean on it.
 division: fabrication

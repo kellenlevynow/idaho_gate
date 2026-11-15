@@ -1,0 +1,45 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import Drawing from '@/components/Drawing.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { breadcrumbSchema } from '@/lib/schema';
+const items = (await getCollection('industries')).sort((a, b) => a.data.order - b.data.order);
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Industries', path: '/industries/' }];
+---
+<Base
+  title="Industries we build for"
+  description="Idaho Gate Co. builds gates and metalwork for homes, businesses, farms, industrial sites, builders and resorts across the Inland Northwest."
+  schema={[breadcrumbSchema(crumbs)]}
+>
+  <section class="surface-dark grid-dark">
+    <div class="wrap py-10 lg:py-16">
+      <Breadcrumbs crumbs={crumbs} />
+      <p class="eyebrow mt-8 text-ember-400">Industries</p>
+      <h1 class="display-sm mt-5 max-w-4xl">Same shop. Different jobs to <span class="serif-accent text-ember-400">do.</span></h1>
+      <p class="lede mt-6 max-w-2xl text-steel-200">A homeowner, a rancher and a general contractor ask different things of a gate and of the people who build it. Pick the description that fits you.</p>
+    </div>
+  </section>
+  <section class="surface-paper on-light section-tight">
+    <div class="wrap">
+      <ul class="grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+        {items.map((s, i) => (
+          <li>
+            <a href={`/industries/${s.id}/`} class="group block no-underline">
+              {s.data.visual && (
+                <div class="sheet overflow-hidden bg-white transition-shadow group-hover:shadow-[0_18px_40px_-20px_rgb(19_20_21/0.5)]">
+                  <Drawing kind={s.data.visual.kind} preset={s.data.visual.preset} theme="light" dims={false} titleBlock={false} footings={false} decorative />
+                </div>
+              )}
+              <p class="tech mt-5 text-ember-600">{String(i + 1).padStart(2, '0')}</p>
+              <p class="h3 mt-1 group-hover:text-ember-600">{s.data.navTitle}</p>
+              <p class="mt-2 text-[0.98rem] leading-relaxed text-steel-500">{s.data.summary}</p>
+              <span class="link-arrow mt-4">Read more <Icon name="arrow" /></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,43 @@
+---
+import Legal from '@/layouts/Legal.astro';
+import { site } from '@/site.config';
+---
+<Legal title="Terms of use" description="Terms for using the Idaho Gate Co. website, including how to read concept renderings and drawings, guides, quotes and the gate studio." path="/terms/" updated="November 2026">
+  <p>These terms cover your use of {site.domain}, operated by {site.legalName} ("we"). By using the site you agree to them. They do not replace the written quote or contract for any work we do for you.</p>
+
+  <h2>Concept renderings and drawings</h2>
+  <p>Unless an image is expressly labeled as completed work, the renderings, 3D models and drawings on this site are concept visuals created to explain how we design and build. They are not photographs of finished projects and they are not construction documents. Dimensions shown are illustrative and are marked "not for construction."</p>
+
+  <h2>The gate studio</h2>
+  <p>The gate studio is a visualization tool. A configuration you create there is a starting point for a conversation. It is not a quote, a specification or a commitment that a particular design suits your site. Final design, sizes and details are set after a site visit and confirmed in a drawing you approve.</p>
+
+  <h2>Guides and general information</h2>
+  <p>Our guides and service pages give general information to help you plan. They are not engineering, legal or code advice for your property. Building codes, fire codes, safety standards, permit rules and HOA requirements vary by location and change over time. Confirm requirements with the relevant authority, and follow the manufacturer's instructions for any equipment. Where we refer to standards such as UL 325 or ASTM F2200, we summarize them in plain language and the standards themselves govern.</p>
+
+  <h2>Quotes and pricing</h2>
+  <p>Nothing on this site is an offer to perform work at a stated price. Prices are provided only in a written quote prepared for your project. A quote request sent through the site does not create a contract.</p>
+
+  <h2>Service area</h2>
+  <p>The service area pages describe where we generally work and how we schedule it. Availability for a given address, including locations in Washington and Montana, is confirmed when you contact us.</p>
+
+  <h2>Your submissions</h2>
+  <p>When you send us information, photos or drawings, you confirm that you have the right to share them and you allow us to use them to respond to your request and carry out any work you hire us for. We handle personal information as described in our <a href="/privacy/">privacy policy</a>.</p>
+
+  <h2>Intellectual property</h2>
+  <p>The text, drawings, renderings, 3D models, logo and code on this site belong to {site.legalName} or are used with permission. You may view and share pages for personal, non-commercial purposes. Please do not copy, reproduce or reuse the content, designs or drawings for commercial purposes without our written consent.</p>
+
+  <h2>Third-party names</h2>
+  <p>Product and company names mentioned on this site, including operator manufacturers and standards organizations, belong to their owners. Mentioning them does not imply endorsement by them.</p>
+
+  <h2>Links</h2>
+  <p>We may link to other websites for convenience. We are not responsible for their content or practices.</p>
+
+  <h2>No warranty on the website</h2>
+  <p>We work to keep the site accurate and available, but it is provided as is, without warranties of any kind. To the extent the law allows, we are not liable for losses arising from use of the site or reliance on its general information. This does not limit any warranty we give in writing for work we perform.</p>
+
+  <h2>Governing law</h2>
+  <p>These terms are governed by the laws of the State of Idaho.</p>
+
+  <h2>Contact</h2>
+  <p>Questions about these terms: <a href={`tel:${site.contact.phoneTel}`}>{site.contact.phoneDisplay}</a> or <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>.</p>
+</Legal>

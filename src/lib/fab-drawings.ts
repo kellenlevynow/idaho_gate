@@ -380,8 +380,49 @@ const entryArch: Maker = (theme) => {
   return s.done('Elevation of a steel ranch entry arch with a plasma-cut sign panel hung from the top beam.');
 };
 
+const measure: Maker = (theme) => {
+  const s = new Sheet(900, 600, theme);
+  // plan view: road at the bottom, property at the top
+  s.rect(40, 500, 820, 60, { stroke: s.p.faint });
+  s.text(450, 536, 'ROAD', { anchor: 'middle' });
+  // driveway
+  s.poly([[330, 500], [570, 500], [590, 90], [310, 90]], { stroke: s.p.faint });
+  s.text(450, 300, 'DRIVEWAY', { anchor: 'middle', fill: s.p.faint });
+  // fence line and posts
+  const gy = 380;
+  s.line(60, gy, 290, gy, { sw: 1.4 });
+  s.line(610, gy, 840, gy, { sw: 1.4 });
+  for (let x = 80; x < 290; x += 42) s.line(x, gy - 5, x, gy + 5);
+  for (let x = 630; x < 840; x += 42) s.line(x, gy - 5, x, gy + 5);
+  s.rect(288, gy - 9, 18, 18, { fill: s.p.solid });
+  s.rect(594, gy - 9, 18, 18, { fill: s.p.solid });
+  // gate leaves closed and swing arcs
+  s.line(306, gy, 448, gy, { sw: 3 });
+  s.line(452, gy, 594, gy, { sw: 3 });
+  s.path(`M 448 ${gy} A 142 142 0 0 0 306 ${gy - 142}`, { stroke: s.p.dim, dash: '3 4' });
+  s.path(`M 452 ${gy} A 142 142 0 0 1 594 ${gy - 142}`, { stroke: s.p.dim, dash: '3 4' });
+  // A: clear opening
+  s.dimH(306, 594, gy + 44, 'A  CLEAR OPENING');
+  // B: driveway width
+  s.dimH(322, 578, 130, 'B  DRIVEWAY WIDTH');
+  // C: slope arrow
+  s.line(450, 250, 450, 180, { stroke: s.p.dim, sw: 1.2 });
+  s.poly([[450, 170], [444, 184], [456, 184]], { fill: s.p.dim, stroke: 'none' });
+  s.text(462, 218, 'C  SLOPE: RISE OR FALL?', { fill: s.p.dim, size: 11 });
+  // D: swing room
+  s.dimV(gy - 142, gy, 250, 'D  SWING ROOM');
+  // E: slide room
+  s.dimH(612, 838, gy - 40, 'E  SLIDE ROOM');
+  // F: setback
+  s.dimV(gy, 500, 700, 'F  SETBACK');
+  s.text(60, 80, 'PROPERTY SIDE', {});
+  s.note(297, gy, 150, 440, 'POST OR PILLAR', 'end');
+  s.titleBlock('Measuring your opening', 'IG-G01');
+  return s.done('Plan diagram of a driveway showing six measurements for a gate: clear opening, driveway width, slope, swing room, slide room and setback from the road.');
+};
+
 export const fabDrawings: Record<string, Maker> = {
-  railing, 'stair-rail': stairRail, screen, enclosure, structural, bracket, gangway, canopy, bollards, 'entry-arch': entryArch,
+  railing, 'stair-rail': stairRail, screen, enclosure, structural, bracket, gangway, canopy, bollards, 'entry-arch': entryArch, measure,
 };
 
 export function fabDrawing(key: string, theme: DrawingTheme = 'dark'): DrawingResult {

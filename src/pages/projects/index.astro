@@ -1,0 +1,79 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import Drawing from '@/components/Drawing.astro';
+import ConceptRender from '@/components/ConceptRender.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { breadcrumbSchema } from '@/lib/schema';
+const concepts = (await getCollection('concepts')).sort((a, b) => a.data.order - b.data.order);
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Projects', path: '/projects/' }];
+const applications = [...new Set(concepts.map((c) => c.data.application))];
+---
+<Base
+  title="Projects and concept studies"
+  description="Concept studies from Idaho Gate Co. showing how we design gates and metalwork: estate, sliding, ranch and commercial gates, screens and waterfront work."
+  schema={[breadcrumbSchema(crumbs)]}
+>
+  <section class="surface-black">
+    <div class="wrap py-10 lg:py-16">
+      <Breadcrumbs crumbs={crumbs} />
+      <p class="eyebrow mt-8 text-ember-400">Projects</p>
+      <h1 class="display-sm mt-5 max-w-4xl">Concept studies. How we think before we <span class="serif-accent text-ember-400">cut.</span></h1>
+      <div class="mt-6 grid gap-6 lg:grid-cols-12">
+        <p class="lede max-w-2xl text-steel-200 lg:col-span-7">Each study takes a real kind of site and works the design through: how it opens, what carries the load, how it is automated and finished. They are rendered and drawn from the same parametric models we use to design.</p>
+        <div class="border border-dashed border-white/25 p-5 lg:col-span-5">
+          <p class="tech text-ember-400">A straight note</p>
+          <p class="mt-2 text-[0.95rem] text-steel-300">Everything on this page is a concept rendering or drawing, not a photograph of completed work. As finished projects are photographed they will be added here and labeled as built.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="surface-paper on-light section-tight" data-gallery>
+    <div class="wrap">
+      <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Filter concept studies by application">
+        <button type="button" class="filter is-on" aria-pressed="true" data-filter="all">All <span class="opacity-60">{concepts.length}</span></button>
+        {applications.map((a) => (
+          <button type="button" class="filter" aria-pressed="false" data-filter={a}>{a} <span class="opacity-60">{concepts.filter((c) => c.data.application === a).length}</span></button>
+        ))}
+      </div>
+      <ul class="mt-10 grid gap-x-8 gap-y-14 md:grid-cols-2" aria-live="polite">
+        {concepts.map((c, i) => (
+          <li data-application={c.data.application}>
+            <a href={`/projects/${c.id}/`} class="group block no-underline">
+              {c.data.visual!.kind === 'gate'
+                ? <ConceptRender name={c.data.visual!.preset} alt={`Concept rendering: ${c.data.title}`} class="sheet overflow-hidden bg-ink-900" eager={i < 2} />
+                : <div class="sheet overflow-hidden bg-ink-900"><Drawing kind="fab" preset={c.data.visual!.preset} theme="dark" decorative /></div>}
+              <div class="mt-5 flex items-baseline justify-between gap-4">
+                <p class="tech text-ember-600">Concept {c.data.number}</p>
+                <p class="tech text-steel-500">{c.data.application} · {c.data.productType}</p>
+              </div>
+              <p class="h3 mt-2 group-hover:text-ember-600">{c.data.title}</p>
+              <p class="mt-2 text-[0.98rem] leading-relaxed text-steel-500">{c.data.summary}</p>
+              <span class="link-arrow mt-4">View the study <Icon name="arrow" /></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const root = document.querySelector('[data-gallery]');
+  if (root) {
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+    const items = [...root.querySelectorAll<HTMLElement>('[data-application]')];
+    buttons.forEach((b) => b.addEventListener('click', () => {
+      const f = b.dataset.filter!;
+      buttons.forEach((x) => { const on = x === b; x.classList.toggle('is-on', on); x.setAttribute('aria-pressed', String(on)); });
+      items.forEach((it) => (it.hidden = f !== 'all' && it.dataset.application !== f));
+    }));
+  }
+</script>
+<style is:global>
+  .filter { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; min-height: 2.6rem; padding: 0.5rem 0.9rem; border: 1px solid rgb(19 20 21 / 0.25); background: none; cursor: pointer; transition: all 0.15s; }
+  .filter:hover { border-color: var(--color-ink-900); }
+  .filter.is-on { background: var(--color-ink-900); color: var(--color-bone); border-color: var(--color-ink-900); }
+</style>

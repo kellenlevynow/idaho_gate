@@ -2,7 +2,7 @@
 title: Pedestrian, courtyard and garden gates
 navTitle: Pedestrian and garden gates
 seoTitle: Pedestrian and garden gates, custom built
-description: Custom pedestrian, courtyard and garden gates in steel and aluminum. Matched to your driveway gate or fence, with proper latches, closers and pool-code options.
+description: Custom pedestrian, courtyard and garden gates in steel and aluminum. Matched to your driveway gate or fence, with latches and closers that work.
 summary: Walk gates matched to the driveway gate, with latches and closers that work every time.
 lede: You will use the walk gate ten times for every time you use the driveway gate. It deserves the same thought, and a latch that works with one hand.
 division: gates

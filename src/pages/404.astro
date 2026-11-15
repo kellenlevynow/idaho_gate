@@ -1,0 +1,23 @@
+---
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import Drawing from '@/components/Drawing.astro';
+---
+<Base title="Page not found" description="That page is not here. Find custom gates, automation, fabrication and the quote form from the links on this page." noindex hideCta>
+  <section class="surface-dark grid-dark min-h-[70vh]">
+    <div class="wrap grid items-center gap-12 py-16 lg:grid-cols-12 lg:py-24">
+      <div class="lg:col-span-6">
+        <p class="eyebrow text-ember-400">Error 404</p>
+        <h1 class="display-sm mt-5">This gate is <span class="serif-accent text-ember-400">closed.</span></h1>
+        <p class="lede mt-6 max-w-lg text-steel-200">The page you were after has moved or never existed. These will get you where you were going.</p>
+        <ul class="mt-8 grid max-w-lg gap-px bg-white/10 sm:grid-cols-2">
+          {[['/gates/', 'Custom gates'], ['/automation/', 'Automation'], ['/fabrication/', 'Fabrication'], ['/projects/', 'Projects'], ['/resources/', 'Guides'], ['/contact/', 'Contact']].map(([h, t]) => (
+            <li class="bg-ink-900"><a class="flex items-center justify-between p-4 font-[620] text-bone no-underline hover:text-ember-400" href={h}>{t} <Icon name="arrow" /></a></li>
+          ))}
+        </ul>
+        <a href="/quote/" class="btn btn-lg mt-8" data-cta="404_quote">Request a quote <Icon name="arrow" /></a>
+      </div>
+      <div class="lg:col-span-6"><div class="sheet sheet-dark bg-ink-900"><Drawing preset="swing-single" theme="dark" decorative /></div></div>
+    </div>
+  </section>
+</Base>

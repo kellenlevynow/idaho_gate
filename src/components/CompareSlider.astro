@@ -1,0 +1,46 @@
+---
+/**
+ * Before and after slider. Here it compares the line drawing of a gate
+ * with the rendered model from the same camera. A native range input does
+ * the work, so it is keyboard and touch accessible with no library.
+ */
+import { Picture } from 'astro:assets';
+interface Props { before: string; after: string; beforeLabel: string; afterLabel: string; alt: string; class?: string }
+const { before, after, beforeLabel, afterLabel, alt, class: cls = '' } = Astro.props;
+const files = import.meta.glob<{ default: ImageMetadata }>('@/assets/renders/presets/*.jpg', { eager: true });
+const pick = (n: string) => Object.entries(files).find(([p]) => p.endsWith(`/${n}.jpg`))![1].default;
+---
+<div class:list={['compare sheet sheet-dark', cls]} data-compare style="--pos:50%">
+  <Picture src={pick(after)} alt={alt} formats={['avif', 'webp']} widths={[640, 960, 1600]} sizes="(min-width:1024px) 60vw, 100vw" class="compare-img" />
+  <div class="compare-top" aria-hidden="true">
+    <Picture src={pick(before)} alt="" formats={['avif', 'webp']} widths={[640, 960, 1600]} sizes="(min-width:1024px) 60vw, 100vw" class="compare-img" />
+  </div>
+  <span class="compare-label left tech">{beforeLabel}</span>
+  <span class="compare-label right tech">{afterLabel}</span>
+  <span class="compare-handle" aria-hidden="true"><span></span></span>
+  <input type="range" min="0" max="100" value="50" step="1" aria-label={`Slide to compare ${beforeLabel.toLowerCase()} and ${afterLabel.toLowerCase()}`} class="compare-range" />
+</div>
+<script>
+  document.querySelectorAll<HTMLElement>('[data-compare]').forEach((el) => {
+    const input = el.querySelector<HTMLInputElement>('input')!;
+    const set = () => el.style.setProperty('--pos', `${input.value}%`);
+    input.addEventListener('input', set);
+    set();
+  });
+</script>
+<style is:global>
+  .compare { position: relative; overflow: hidden; aspect-ratio: 16 / 10; background: var(--color-ink-900); }
+  .compare picture { display: block; width: 100%; height: 100%; }
+  .compare-img { width: 100%; height: 100%; object-fit: cover; }
+  .compare-top { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+  .compare-label { position: absolute; bottom: 0.9rem; padding: 0.3rem 0.55rem; background: rgb(13 13 14 / 0.75); color: var(--color-bone); }
+  .compare-label.left { left: 0.9rem; }
+  .compare-label.right { right: 0.9rem; }
+  .compare-handle { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; margin-left: -1px; background: var(--color-ember-400); pointer-events: none; }
+  .compare-handle span { position: absolute; top: 50%; left: 50%; width: 2.6rem; height: 2.6rem; margin: -1.3rem 0 0 -1.3rem; border-radius: 50%; background: var(--color-ember-600); border: 2px solid var(--color-bone); }
+  .compare-handle span::before, .compare-handle span::after { content: ''; position: absolute; top: 50%; width: 0; height: 0; margin-top: -5px; border: 5px solid transparent; }
+  .compare-handle span::before { left: 0.45rem; border-right-color: #fff; }
+  .compare-handle span::after { right: 0.45rem; border-left-color: #fff; }
+  .compare-range { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
+  .compare:has(.compare-range:focus-visible) { outline: 2px solid var(--color-ember-400); outline-offset: 3px; }
+</style>

@@ -1,0 +1,136 @@
+---
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import PageHero from '@/components/PageHero.astro';
+import Drawing from '@/components/Drawing.astro';
+import RelatedLinks from '@/components/RelatedLinks.astro';
+import { site } from '@/site.config';
+import { breadcrumbSchema } from '@/lib/schema';
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Company', path: '/company/about/' }, { name: 'Capabilities', path: '/company/capabilities/' }];
+const groups = [
+  { t: 'Design', rows: [
+    ['Site measure', 'Tape, level and laser survey of openings, grades and existing structure'],
+    ['2D drawings', 'Scaled elevations, plans and shop drawings for approval'],
+    ['3D modeling', 'Parametric gate models, renderings and exploded views'],
+    ['Cut artwork', 'Vector drawing of panels, signs and patterns for CNC cutting'],
+    ['Engineering', 'Coordinated with a licensed engineer where the work requires it'],
+  ] },
+  { t: 'Cutting and forming', rows: [
+    ['CNC plasma cutting', 'Plate and sheet parts, panels and artwork cut from drawing files'],
+    ['Sawing', 'Tube, pipe, bar and structural shapes cut to length and angle'],
+    ['Coping and notching', 'Tube and pipe joints fitted before welding'],
+    ['Rolling and bending', 'Arched top rails, curved members and formed parts'],
+    ['Drilling and punching', 'Hole patterns for base plates, hinges and connections'],
+  ] },
+  { t: 'Welding and assembly', rows: [
+    ['MIG welding', 'Production welding of steel frames, gates and structures'],
+    ['TIG welding', 'Aluminum, stainless and visible finish welds'],
+    ['Fixture assembly', 'Frames built square on flat tables with jigs and gauge blocks'],
+    ['Trial fitting', 'Hardware mounted and gates operated in the shop before finishing'],
+  ] },
+  { t: 'Finishing', rows: [
+    ['Surface preparation', 'Abrasive blasting and cleaning ahead of coating'],
+    ['Powder coating', 'Primer and top coat in standard and custom colors'],
+    ['Hot-dip galvanizing', 'Through a regional galvanizer, alone or under powder coat'],
+    ['Field touch-up', 'Paint systems for site welds and repairs'],
+  ] },
+  { t: 'Installation and service', rows: [
+    ['Footings and posts', 'Excavation, setting and concrete below frost depth'],
+    ['Gate installation', 'Hanging, alignment and hardware'],
+    ['Automation', 'Operators, safety devices, access control and commissioning'],
+    ['Railings and metalwork', 'Site fitting and anchoring to wood, concrete and steel'],
+    ['Repair and maintenance', 'Structural repair, operator troubleshooting and scheduled service'],
+  ] },
+];
+---
+<Base
+  title="Shop capabilities"
+  description="What Idaho Gate Co. can design, cut, form, weld, finish and install. CNC plasma cutting, MIG and TIG welding in steel and aluminum."
+  schema={[breadcrumbSchema(crumbs)]}
+  cta={{ path: 'fabrication', context: 'capabilities' }}
+>
+  <PageHero crumbs={crumbs} eyebrow="Capabilities" title={`What the shop can take <span class="serif-accent text-ember-400">on.</span>`} lede="A plain list of what we do in house, what we do with partners and what we do not do at all. If your project is on the first two lists, send it over.">
+    <div slot="actions" class="mt-8 flex flex-wrap gap-3">
+      <a href="/quote/?path=fabrication" class="btn btn-lg" data-cta="capabilities_quote">Send a fabrication request <Icon name="arrow" /></a>
+      <a href={`tel:${site.contact.phoneTel}`} class="btn btn-lg btn-ghost-dark"><Icon name="phone" /> {site.contact.phoneDisplay}</a>
+    </div>
+    <div slot="visual" class="sheet sheet-dark bg-ink-900"><Drawing kind="fab" preset="structural" theme="dark" /></div>
+  </PageHero>
+
+  <section class="surface-paper on-light section">
+    <div class="wrap">
+      {groups.map((g, gi) => (
+        <div class="grid gap-x-10 gap-y-4 border-t border-ink-900 py-10 lg:grid-cols-12">
+          <div class="lg:col-span-3">
+            <span class="tech text-ember-600">0{gi + 1}</span>
+            <h2 class="h2 mt-1">{g.t}</h2>
+          </div>
+          <dl class="lg:col-span-9">
+            {g.rows.map(([k, v]) => (
+              <div class="grid gap-x-8 gap-y-1 border-b border-ink-900/12 py-3.5 sm:grid-cols-[15rem_1fr]">
+                <dt class="font-[640] [font-stretch:106%]">{k}</dt>
+                <dd class="text-steel-500">{v}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="surface-dark section">
+    <div class="wrap grid gap-px bg-white/10 md:grid-cols-3">
+      <div class="bg-ink-900 p-8">
+        <p class="tech text-ember-400">Materials</p>
+        <p class="h3 mt-3">What we work in</p>
+        <ul class="mt-4 space-y-2 text-steel-300">
+          <li>Mild steel: tube, pipe, bar, plate, sheet, structural shapes</li>
+          <li>Aluminum: tube, plate, sheet, extrusions</li>
+          <li>Weathering steel plate and sheet</li>
+          <li>Stainless for cable, hardware and accents</li>
+        </ul>
+      </div>
+      <div class="bg-ink-900 p-8">
+        <p class="tech text-ember-400">With partners</p>
+        <p class="h3 mt-3">What we coordinate</p>
+        <ul class="mt-4 space-y-2 text-steel-300">
+          <li>Structural engineering and stamped calculations</li>
+          <li>Masonry pillars and stone work</li>
+          <li>Electrical service for operators, by licensed electricians</li>
+          <li>Hot-dip galvanizing</li>
+          <li>Glass for glass-ready railings</li>
+        </ul>
+      </div>
+      <div class="bg-ink-900 p-8">
+        <p class="tech text-ember-400">Not our work</p>
+        <p class="h3 mt-3">What we do not do</p>
+        <ul class="mt-4 space-y-2 text-steel-300">
+          <li>Production machining and casting</li>
+          <li>Pressure vessels and code-stamped piping</li>
+          <li>Ductwork and HVAC sheet metal</li>
+          <li>General fencing by the mile</li>
+        </ul>
+        <p class="mt-4 text-sm text-steel-400">If you need one of these, ask anyway. We can often point you to someone good.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="surface-bone on-light section-tight">
+    <div class="wrap grid gap-10 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <p class="eyebrow text-ember-600">Size and capacity</p>
+        <h2 class="h2 mt-4">How big, how many, how soon.</h2>
+      </div>
+      <div class="prose-gate lg:col-span-6 lg:col-start-7">
+        <p>Capacity depends on the piece and on what else is in the shop. Rather than publish limits that are wrong half the time, we ask you to send the job.</p>
+        <ul>
+          <li><strong>Size.</strong> Gates and frames are built in the largest sections that can be finished, transported and installed. Bigger work is designed as bolted or field-welded sections.</li>
+          <li><strong>Quantity.</strong> One-offs and short runs are our normal work. Repeat parts get fixtures after the first article.</li>
+          <li><strong>Lead time.</strong> Set by design approval, material, shop schedule and finishing. We give you a date with the quote and tell you if it moves.</li>
+        </ul>
+        <p>Our guide to <a href="/resources/working-with-a-fabrication-shop/">working with a fabrication shop</a> lists what to send for a fast, accurate quote.</p>
+      </div>
+    </div>
+  </section>
+  <RelatedLinks paths={['/fabrication/', '/company/fabrication-process/', '/company/design-engineering/', '/fabrication/general-fabrication/', '/fabrication/structural-and-custom-steel/', '/industries/builders-and-developers/']} heading="Related" tone="light" />
+</Base>

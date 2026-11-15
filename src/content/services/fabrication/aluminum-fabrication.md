@@ -2,7 +2,7 @@
 title: Aluminum fabrication
 navTitle: Aluminum fabrication
 seoTitle: Aluminum fabrication and welding, North Idaho
-description: Aluminum fabrication and TIG welding in North Idaho. Dock gangways, railings, light gates, marine and trailer work where low weight and corrosion resistance matter.
+description: Aluminum fabrication and TIG welding in North Idaho. Dock gangways, railings, light gates and trailer work where weight and corrosion matter.
 summary: Light, corrosion-resistant work for docks, railings, gates and equipment.
 lede: Aluminum weighs about a third of what steel does and does not rust. On a lake, on a long gate leaf, or on anything a person has to lift, that changes the design.
 division: fabrication

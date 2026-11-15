@@ -1,0 +1,95 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import Drawing from '@/components/Drawing.astro';
+import ConceptRender from '@/components/ConceptRender.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import RelatedLinks from '@/components/RelatedLinks.astro';
+import { site } from '@/site.config';
+import { gatePresets } from '@/data/gate-presets';
+import { describeSpec } from '@/lib/drawing';
+import { breadcrumbSchema, imageSchema } from '@/lib/schema';
+
+export async function getStaticPaths() {
+  const all = (await getCollection('concepts')).sort((a, b) => a.data.order - b.data.order);
+  return all.map((entry, i) => ({ params: { slug: entry.id }, props: { entry, next: all[(i + 1) % all.length] } }));
+}
+const { entry, next } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+const path = `/projects/${entry.id}/`;
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Projects', path: '/projects/' }, { name: d.title, path }];
+const v = d.visual!;
+const isGate = v.kind === 'gate';
+const preset = isGate ? gatePresets[v.preset] : null;
+const studioHref = preset ? `/quote/?studio=${encodeURIComponent(`Concept ${d.number}: ${describeSpec(preset.spec)}`)}` : `/quote/?path=fabrication`;
+const schema = [
+  breadcrumbSchema(crumbs),
+  imageSchema({ name: `${d.title} (concept)`, description: d.description, path, contentUrl: '/og/default.jpg' }),
+];
+---
+<Base title={d.seoTitle} description={d.description} schema={schema} service={`concept/${entry.id}`} cta={{ path: isGate ? 'gates' : 'fabrication', context: `concept_${entry.id}`, heading: 'Start from this design.<br />Make it yours.' }}>
+  <section class="surface-black" data-track-location="concept_hero">
+    <div class="wrap py-10 lg:py-14">
+      <Breadcrumbs crumbs={crumbs} />
+      <div class="mt-8 grid items-end gap-8 lg:grid-cols-12">
+        <div class="lg:col-span-8">
+          <p class="eyebrow text-ember-400">Concept study {d.number} · {d.application}</p>
+          <h1 class="display-sm mt-5">{d.title}</h1>
+          <p class="lede mt-5 max-w-2xl text-steel-200">{d.lede}</p>
+        </div>
+        <div class="lg:col-span-4 lg:text-right">
+          <p class="concept-tag text-stone-200">Design study · not a completed project</p>
+        </div>
+      </div>
+      <div class="mt-10 grid gap-6 lg:grid-cols-12">
+        {isGate ? (
+          <ConceptRender name={v.preset} alt={`Concept rendering: ${d.title}`} eager class="sheet sheet-dark overflow-hidden lg:col-span-7" sizes="(min-width: 1024px) 58vw, 100vw" />
+        ) : (
+          <div class="sheet sheet-dark bg-ink-900 lg:col-span-7"><Drawing kind="fab" preset={v.preset} theme="dark" /></div>
+        )}
+        <div class="lg:col-span-5">
+          {isGate && <div class="sheet sheet-dark bg-ink-900"><Drawing preset={v.preset} theme="dark" /></div>}
+          <dl class:list={['border-t border-white/15', isGate && 'mt-6']}>
+            <div class="grid grid-cols-[8.5rem_1fr] gap-3 border-b border-white/15 py-2.5"><dt class="tech text-steel-400">Setting</dt><dd class="text-[0.95rem]">{d.setting}</dd></div>
+            {d.specs.map((s) => (
+              <div class="grid grid-cols-[8.5rem_1fr] gap-3 border-b border-white/15 py-2.5"><dt class="tech text-steel-400">{s.label}</dt><dd class="text-[0.95rem]">{s.value}</dd></div>
+            ))}
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="surface-paper on-light section-tight">
+    <div class="wrap grid gap-12 lg:grid-cols-12">
+      <article class="prose-gate lg:col-span-7"><Content /></article>
+      <aside class="lg:col-span-4 lg:col-start-9">
+        <div class="space-y-6 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]">
+          {isGate && v.view === 'both' && (
+            <div>
+              <div class="sheet bg-white"><Drawing preset={v.preset} view="plan" theme="light" /></div>
+              <p class="tech mt-3 text-steel-500">Concept plan · clearances to check on site</p>
+            </div>
+          )}
+          <div class="surface-dark p-6" data-track-location="concept_aside">
+            <p class="h3">Want something like this?</p>
+            <p class="mt-2 text-[0.95rem] text-steel-300">Send this concept with your request. We measure your opening and redraw it for your site.</p>
+            <a href={studioHref} class="btn mt-5 w-full" data-cta="concept_quote">Quote this concept <Icon name="arrow" /></a>
+            {isGate && <a href="/studio/" class="btn btn-ghost-dark mt-3 w-full" data-cta="concept_studio">Change it in the studio</a>}
+            <a href={`tel:${site.contact.phoneTel}`} class="mt-4 flex items-center justify-center gap-2 font-[640] text-bone no-underline hover:text-ember-400"><Icon name="phone" /> {site.contact.phoneDisplay}</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="surface-bone on-light">
+    <a href={`/projects/${next.id}/`} class="wrap group flex items-center justify-between gap-6 py-10 no-underline">
+      <span><span class="tech text-steel-500">Next concept study · {next.data.number}</span><span class="h2 mt-2 block group-hover:text-ember-600">{next.data.title}</span></span>
+      <span class="grid h-14 w-14 flex-none place-items-center border border-ink-900 transition-colors group-hover:border-ember-600 group-hover:bg-ember-600 group-hover:text-white"><Icon name="arrow" size={20} /></span>
+    </a>
+  </section>
+  <RelatedLinks paths={d.related} tone="light" />
+</Base>

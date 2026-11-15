@@ -3,8 +3,8 @@
 import { site } from '@/site.config';
 import Icon from './Icon.astro';
 import type { InquiryPath } from '@/data/nav';
-interface Props { tone?: 'dark' | 'light'; path?: InquiryPath; id: string; heading?: string; context?: string }
-const { tone = 'dark', path = 'gates', id, heading, context = '' } = Astro.props;
+interface Props { tone?: 'dark' | 'light'; path?: InquiryPath; id: string; heading?: string; context?: string; city?: string }
+const { tone = 'dark', path = 'gates', id, heading, context = '', city = '' } = Astro.props;
 const f = tone === 'dark' ? 'field field-dark' : 'field';
 ---
 <form class="quick-form" data-quick-form data-path={path} data-context={context} novalidate aria-labelledby={heading ? `${id}-h` : undefined} data-track-location={`quick_form_${id}`}>
@@ -20,7 +20,7 @@ const f = tone === 'dark' ? 'field field-dark' : 'field';
     </div>
     <div class="sm:col-span-2">
       <label class="field-label" for={`${id}-city`}>Project city or town</label>
-      <input class={f} id={`${id}-city`} name="city" type="text" autocomplete="address-level2" required />
+      <input class={f} id={`${id}-city`} name="city" type="text" autocomplete="address-level2" value={city} required />
     </div>
     <div class="sm:col-span-2">
       <label class="field-label" for={`${id}-msg`}>What are you planning?</label>

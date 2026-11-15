@@ -1,8 +1,313 @@
 ---
+import { getCollection } from 'astro:content';
 import Base from '@/layouts/Base.astro';
 import GateTheater from '@/components/home/GateTheater.astro';
+import Icon from '@/components/Icon.astro';
+import Drawing from '@/components/Drawing.astro';
+import ConceptRender from '@/components/ConceptRender.astro';
+import CompareSlider from '@/components/CompareSlider.astro';
+import ServiceMap from '@/components/ServiceMap.astro';
+import FaqList from '@/components/FaqList.astro';
+import { serviceTowns } from '@/site.config';
+import { finishes } from '@/three/finish-data';
+import { getServices, servicePath } from '@/lib/content';
+import { faqSchema } from '@/lib/schema';
+
+const services = await getServices();
+const gateTypes = services.filter((s) => s.data.division === 'gates' && s.data.group === 'types');
+const automation = services.filter((s) => s.data.division === 'automation');
+const fabrication = services.filter((s) => s.data.division === 'fabrication');
+const concepts = (await getCollection('concepts')).sort((a, b) => a.data.order - b.data.order);
+const featured = concepts.filter((c) => ['02', '03', '05', '07'].includes(c.data.number));
+const areaPages = serviceTowns.filter((t) => t.page);
+
+const steps = [
+  ['Concept', 'A site visit, a conversation and a first sketch of what the entrance should do.'],
+  ['Design', 'A scaled elevation and plan. You see it, change it and approve it.'],
+  ['Engineering', 'Posts, footings, hinges and operators sized for weight, wind and snow.'],
+  ['Fabrication', 'Cut, fit on fixtures, welded in sequence, trial-fitted and finished.'],
+  ['Installation', 'Footings below frost, gate hung true, automation set up and tested.'],
+];
+const why = [
+  ['Fit', 'Your opening is not a standard width and your driveway is not level. A custom gate is built to the numbers we measure, so it closes square on the day it is hung and after.'],
+  ['Appearance', 'The gate can take its lines from your house, its stone from your pillars and its panel from the ridgeline you look at. It reads as part of the property, not an add-on.'],
+  ['Function', 'Swing or slide, manual or automated, wide enough for the trailer, clear of the snow pile. The type is chosen for how you use the drive.'],
+  ['Durability', 'Posts and footings sized for this leaf. Welds that seal. A finish system built from the steel up. The parts you cannot see are the ones that last.'],
+  ['Site requirements', 'Slope, wind, frost, setback, HOA rules and fire access are settled on paper before fabrication, not discovered on install day.'],
+];
+const faqs = [
+  { q: 'How much does a custom gate cost?', a: 'It depends on width, how the gate opens, material, infill, posts, automation and site work. We do not publish a price list because an honest number comes from your opening. A site visit and a written, itemized quote are free. Our cost guide explains what moves the price.' },
+  { q: 'Swing gate or sliding gate?', a: 'A swing gate needs level, clear ground inside the gate for its arc. A sliding gate needs a level run along the fence line. Slope inside the gate, heavy snow and strong wind all favor a slide. We check your site and tell you which it allows.' },
+  { q: 'Will an automatic gate work in a North Idaho winter?', a: 'Yes, if it is designed for it. That means the right gate type, ground clearance, a plan for plowed snow, footings below frost depth and an operator and battery rated for the cold.' },
+  { q: 'Do you only build gates?', a: 'Gates are the core. The same shop fabricates railings, privacy screens, architectural metalwork, structural and miscellaneous steel, enclosures and one-off steel and aluminum work.' },
+  { q: 'What areas do you serve?', a: 'North Idaho first: Coeur d\'Alene, Post Falls, Hayden, Rathdrum and the rest of Kootenai County. We run regular routes through Bonner, Boundary and Shoshone counties and the Spokane area, and take project work farther into Eastern Washington and Western Montana.' },
+];
 ---
-<Base title="Custom gates and metal fabrication in North Idaho" description="Placeholder" overlayHeader>
+<Base
+  title="Custom gates and metal fabrication in North Idaho"
+  description="Idaho Gate Co. designs, engineers and fabricates custom driveway gates, automation and architectural metalwork across North Idaho and beyond."
+  overlayHeader
+  schema={[faqSchema(faqs)]}
+  service="home"
+>
   <GateTheater />
-  <section id="what-we-build" class="surface-paper section"><div class="wrap"><h2 class="h2">What we build</h2></div></section>
+
+  <!-- 02 What we build -->
+  <section id="what-we-build" class="surface-paper on-light section" data-track-location="home_build">
+    <div class="wrap">
+      <div class="grid gap-8 lg:grid-cols-12">
+        <div class="lg:col-span-7">
+          <p class="eyebrow text-ember-600">01 / What we build</p>
+          <h2 class="display-sm mt-5">Gates first. Then everything a gate shop can <span class="serif-accent text-ember-600">make.</span></h2>
+        </div>
+        <p class="lede self-end text-steel-500 lg:col-span-4 lg:col-start-9">Three divisions under one roof. The same people draw it, build it and install it.</p>
+      </div>
+
+      <div class="mt-14 grid gap-8 lg:grid-cols-12">
+        <article class="lg:col-span-7" data-reveal>
+          <a href="/gates/" class="group block no-underline">
+            <ConceptRender name="estate-ridgeline-open" alt="Concept rendering of an arched double swing estate gate standing open between stone pillars" class="sheet aspect-[16/10] overflow-hidden bg-ink-900" sizes="(min-width: 1024px) 58vw, 100vw" />
+            <p class="tech mt-6 text-ember-600">Division 01</p>
+            <h3 class="h2 mt-1 group-hover:text-ember-600">Custom gates</h3>
+          </a>
+          <p class="mt-3 max-w-xl text-[1.05rem] text-steel-500">Driveway, estate, ranch and commercial gates designed around your opening, grade and winter, then fabricated and installed by the same crew.</p>
+          <ul class="mt-6 grid gap-x-8 sm:grid-cols-2">
+            {gateTypes.map((s) => (
+              <li class="border-t border-ink-900/15"><a class="group flex items-center justify-between gap-3 py-3 font-[600] no-underline hover:text-ember-600" href={servicePath(s)}>{s.data.navTitle}<span class="text-ember-600 opacity-0 transition-opacity group-hover:opacity-100"><Icon name="arrow" /></span></a></li>
+            ))}
+          </ul>
+        </article>
+
+        <div class="grid content-start gap-10 lg:col-span-4 lg:col-start-9">
+          <article data-reveal style="--reveal-delay:100ms">
+            <a href="/automation/" class="group block no-underline">
+              <div class="sheet bg-white"><Drawing preset="automated-swing" view="plan" theme="light" decorative /></div>
+              <p class="tech mt-5 text-ember-600">Division 02</p>
+              <h3 class="h3 mt-1 group-hover:text-ember-600">Automation and access</h3>
+            </a>
+            <p class="mt-2 text-steel-500">Operators, keypads, intercoms, solar and safety devices, specified for the gate they move.</p>
+            <ul class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[0.92rem]">
+              {automation.map((s) => <li><a class="underline decoration-ink-900/25 underline-offset-4 hover:text-ember-600" href={servicePath(s)}>{s.data.navTitle}</a></li>)}
+            </ul>
+          </article>
+          <article data-reveal style="--reveal-delay:200ms">
+            <a href="/fabrication/" class="group block no-underline">
+              <div class="sheet bg-white"><Drawing kind="fab" preset="railing" theme="light" decorative /></div>
+              <p class="tech mt-5 text-ember-600">Division 03</p>
+              <h3 class="h3 mt-1 group-hover:text-ember-600">Metal fabrication</h3>
+            </a>
+            <p class="mt-2 text-steel-500">Railings, screens, architectural metalwork, structural steel and one-off work in steel and aluminum.</p>
+            <ul class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[0.92rem]">
+              {fabrication.slice(0, 5).map((s) => <li><a class="underline decoration-ink-900/25 underline-offset-4 hover:text-ember-600" href={servicePath(s)}>{s.data.navTitle}</a></li>)}
+            </ul>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 Concept to fabrication -->
+  <section class="surface-dark section" data-track-location="home_process">
+    <div class="wrap">
+      <div class="grid items-center gap-12 lg:grid-cols-12">
+        <div class="lg:col-span-5">
+          <p class="eyebrow text-ember-400">02 / From concept to fabrication</p>
+          <h2 class="display-sm mt-5">An idea becomes a drawing. The drawing becomes <span class="serif-accent text-ember-400">steel.</span></h2>
+          <p class="lede mt-6 text-steel-200">Drag the slider. On the left is the line drawing you approve. On the right is the same gate, built.</p>
+          <a href="/company/approach/" class="link-arrow mt-8 text-bone">How a project runs <Icon name="arrow" /></a>
+        </div>
+        <div class="lg:col-span-7">
+          <CompareSlider before="estate-ridgeline-line" after="estate-ridgeline" beforeLabel="Drawing" afterLabel="Built" alt="Concept gate rendered as built, with a slider revealing the line drawing of the same view" />
+          <p class="tech mt-3 text-steel-400">Concept model · same camera, two views</p>
+        </div>
+      </div>
+      <ol class="mt-16 grid gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-5">
+        {steps.map(([t, b], i) => (
+          <li class="bg-ink-900 p-6" data-reveal style={`--reveal-delay:${i * 70}ms`}>
+            <span class="tech text-ember-400">0{i + 1}</span>
+            <p class="h3 mt-3">{t}</p>
+            <p class="mt-2 text-[0.95rem] leading-relaxed text-steel-300">{b}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- 04 Featured capabilities -->
+  <section class="surface-bone on-light section" data-track-location="home_capabilities">
+    <div class="wrap">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <p class="eyebrow text-ember-600">03 / Featured capabilities</p>
+          <h2 class="display-sm mt-5 max-w-3xl">Eight kinds of gate. One way of building them.</h2>
+        </div>
+        <a href="/gates/" class="link-arrow">All custom gates <Icon name="arrow" /></a>
+      </div>
+    </div>
+    <div class="mt-12 overflow-x-auto no-scrollbar" tabindex="0" role="region" aria-label="Gate types, scroll sideways for more">
+      <ul class="flex w-max gap-6 px-[var(--gutter)] pb-2 xl:pl-[max(var(--gutter),calc((100vw-var(--maxw))/2+var(--gutter)))]">
+        {gateTypes.map((s, i) => (
+          <li class="w-[19.5rem] flex-none sm:w-[24rem]">
+            <a href={servicePath(s)} class="group block no-underline">
+              <div class="sheet grid aspect-[3/2] place-items-center overflow-hidden bg-white p-2">
+                <Drawing preset={s.data.visual!.preset} theme="light" dims={false} titleBlock={false} footings={false} decorative />
+              </div>
+              <p class="tech mt-4 text-ember-600">{String(i + 1).padStart(2, '0')}</p>
+              <p class="h3 mt-1 group-hover:text-ember-600">{s.data.navTitle}</p>
+              <p class="mt-2 text-[0.95rem] leading-snug text-steel-500">{s.data.summary}</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div class="wrap mt-16">
+      <div class="grid gap-10 border-t border-ink-900 pt-10 lg:grid-cols-12">
+        <div class="lg:col-span-4">
+          <h3 class="h2">And the fabrication that goes with it.</h3>
+          <p class="mt-4 text-steel-500">Railings, screens, structure and site steel for the same properties, and for builders and businesses who need a shop that reads drawings.</p>
+          <a href="/fabrication/" class="link-arrow mt-6">All fabrication <Icon name="arrow" /></a>
+        </div>
+        <ul class="grid gap-x-10 sm:grid-cols-2 lg:col-span-8">
+          {fabrication.map((s, i) => (
+            <li class="border-b border-ink-900/15">
+              <a href={servicePath(s)} class="group grid grid-cols-[2.2rem_1fr_auto] items-baseline gap-2 py-4 no-underline">
+                <span class="tech text-ember-600">{String(i + 1).padStart(2, '0')}</span>
+                <span><span class="block font-[640] [font-stretch:106%] group-hover:text-ember-600">{s.data.navTitle}</span><span class="mt-0.5 block text-[0.9rem] leading-snug text-steel-500">{s.data.summary}</span></span>
+                <span class="text-ember-600"><Icon name="arrow" /></span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 Materials and craftsmanship -->
+  <section class="surface-black section" data-track-location="home_materials">
+    <div class="wrap">
+      <div class="grid gap-8 lg:grid-cols-12">
+        <div class="lg:col-span-7">
+          <p class="eyebrow text-ember-400">04 / Materials and craftsmanship</p>
+          <h2 class="display-sm mt-5">The finish you see sits on work you <span class="serif-accent text-ember-400">do not.</span></h2>
+        </div>
+        <p class="lede self-end text-steel-200 lg:col-span-4 lg:col-start-9">Steel and aluminum, cut on CNC equipment, fitted on fixtures and finished for freeze, thaw and road salt.</p>
+      </div>
+      <ul class="mt-12 grid grid-cols-2 gap-3 md:grid-cols-5">
+        {finishes.map((f) => (
+          <li>
+            <ConceptRender name={`finish-${f.key}`} alt={`Close concept view of a gate in ${f.name.toLowerCase()}`} class="aspect-[3/4] overflow-hidden" tag={false} sizes="(min-width: 768px) 20vw, 50vw" />
+            <p class="mt-3 text-[0.92rem] font-[620] leading-snug [font-stretch:106%]">{f.name}</p>
+          </li>
+        ))}
+      </ul>
+      <p class="tech mt-4 text-steel-400">Concept renders of the five standard finishes</p>
+      <div class="mt-14 grid gap-px bg-white/10 md:grid-cols-2 lg:grid-cols-4">
+        {[
+          ['Welds that seal', 'Joints on exterior tube are welded closed so water cannot get in and freeze. Beads are consistent because heat and travel were.'],
+          ['Cut from our drawings', 'Panels, gussets and artwork come off the CNC table exactly as drawn, so the second leaf matches the first.'],
+          ['Hardware with margin', 'Hinges, rollers and operators are rated above the weight they carry, and can be greased and serviced.'],
+          ['Finish from the steel up', 'Blasted surface, zinc-rich primer, powder top coat. Or galvanized, for the hardest service.'],
+        ].map(([t, b], i) => (
+          <div class="bg-ink-950 p-6">
+            <span class="tech text-ember-400">0{i + 1}</span>
+            <p class="h4 mt-3">{t}</p>
+            <p class="mt-2 text-[0.95rem] leading-relaxed text-steel-300">{b}</p>
+          </div>
+        ))}
+      </div>
+      <div class="mt-10 flex flex-wrap gap-3">
+        <a href="/company/materials-finishes/" class="btn btn-ghost-dark" data-cta="home_materials">Materials and finishes <Icon name="arrow" /></a>
+        <a href="/company/fabrication-process/" class="btn btn-ghost-dark" data-cta="home_process">Fabrication process <Icon name="arrow" /></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 Project exploration -->
+  <section class="surface-paper on-light section" data-track-location="home_projects">
+    <div class="wrap">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <p class="eyebrow text-ember-600">05 / Project exploration</p>
+          <h2 class="display-sm mt-5 max-w-3xl">Concept studies, worked through on paper.</h2>
+        </div>
+        <p class="concept-tag text-steel-500">Renderings and drawings · not photographs of completed work</p>
+      </div>
+      <ul class="mt-6 flex flex-wrap gap-2" aria-label="Browse concept studies by application">
+        {[...new Set(concepts.map((c) => c.data.application))].map((a) => (
+          <li><a class="tech inline-flex min-h-[2.6rem] items-center border border-ink-900/25 px-4 no-underline hover:border-ink-900" href="/projects/">{a} <span class="ml-2 opacity-60">{concepts.filter((c) => c.data.application === a).length}</span></a></li>
+        ))}
+      </ul>
+      <ul class="mt-10 grid gap-x-8 gap-y-12 md:grid-cols-2">
+        {featured.map((c, i) => (
+          <li class={i % 2 ? 'md:mt-16' : ''} data-reveal>
+            <a href={`/projects/${c.id}/`} class="group block no-underline">
+              <ConceptRender name={c.data.visual!.preset} alt={`Concept rendering: ${c.data.title}`} class="sheet overflow-hidden bg-ink-900" />
+              <div class="mt-5 flex items-baseline justify-between gap-4">
+                <p class="tech text-ember-600">Concept {c.data.number}</p>
+                <p class="tech text-steel-500">{c.data.application} · {c.data.productType}</p>
+              </div>
+              <p class="h3 mt-2 group-hover:text-ember-600">{c.data.title}</p>
+              <p class="mt-2 text-steel-500">{c.data.summary}</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div class="mt-14 flex flex-wrap gap-3">
+        <a href="/projects/" class="btn" data-cta="home_projects">All {concepts.length} concept studies <Icon name="arrow" /></a>
+        <a href="/studio/" class="btn btn-ghost-light" data-cta="home_studio">Build your own in the studio</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 Why custom -->
+  <section class="surface-bone on-light section" data-track-location="home_why">
+    <div class="wrap grid gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-4">
+        <div class="lg:sticky lg:top-[calc(var(--header-h)+2rem)]">
+          <p class="eyebrow text-ember-600">06 / Why custom</p>
+          <h2 class="display-sm mt-5">Because no two openings are the <span class="serif-accent text-ember-600">same.</span></h2>
+          <p class="mt-6 text-steel-500">A catalog gate assumes a level pad and a standard width. Five reasons a gate built for your site is the better buy.</p>
+        </div>
+      </div>
+      <ol class="lg:col-span-7 lg:col-start-6">
+        {why.map(([t, b], i) => (
+          <li class="grid gap-x-8 gap-y-2 border-t border-ink-900/20 py-8 sm:grid-cols-[5.5rem_1fr]" data-reveal>
+            <span class="font-mono text-[2.4rem] font-[500] leading-none text-ember-600">0{i + 1}</span>
+            <div><h3 class="h2">{t}</h3><p class="mt-3 max-w-xl text-[1.08rem] leading-relaxed text-ink-800">{b}</p></div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- 08 Service area -->
+  <section class="surface-dark section" data-track-location="home_area">
+    <div class="wrap grid items-center gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <p class="eyebrow text-ember-400">07 / Service area</p>
+        <h2 class="display-sm mt-5">North Idaho, and the country around <span class="serif-accent text-ember-400">it.</span></h2>
+        <p class="lede mt-6 text-steel-200">Kootenai County is home. We run regular routes through Bonner, Boundary and Shoshone counties and into Spokane, and take project work across the lines into Washington and Montana.</p>
+        <ul class="mt-8 grid grid-cols-2 gap-x-6">
+          {areaPages.map((t) => (
+            <li class="border-t border-white/12"><a class="group flex items-center justify-between py-2.5 text-bone no-underline hover:text-ember-400" href={`/service-area/${t.page}/`}>{t.page === 'silver-valley' ? 'Silver Valley' : t.name}<span class="tech text-steel-400">{t.state}</span></a></li>
+          ))}
+        </ul>
+        <a href="/service-area/" class="link-arrow mt-8 text-bone">Full service area <Icon name="arrow" /></a>
+      </div>
+      <div class="lg:col-span-6 lg:col-start-7"><ServiceMap /></div>
+    </div>
+  </section>
+
+  <!-- FAQ teaser -->
+  <section class="surface-paper on-light section-tight" data-track-location="home_faq">
+    <div class="wrap grid gap-10 lg:grid-cols-12">
+      <div class="lg:col-span-4">
+        <p class="eyebrow text-ember-600">Questions</p>
+        <h2 class="h2 mt-4">The five we hear most.</h2>
+        <a href="/faq/" class="link-arrow mt-6">All questions <Icon name="arrow" /></a>
+        <a href="/resources/" class="link-arrow ml-6 mt-6">Guides <Icon name="arrow" /></a>
+      </div>
+      <div class="lg:col-span-8"><FaqList faqs={faqs} /></div>
+    </div>
+  </section>
 </Base>

@@ -2,7 +2,7 @@
 title: Commercial and security gates
 navTitle: Commercial and security gates
 seoTitle: Commercial and security gates, North Idaho
-description: Commercial, industrial and security gates in North Idaho and the Spokane area. Cantilever slide gates, access control and operators rated for continuous duty.
+description: Commercial and security gates in North Idaho and the Spokane area. Cantilever slide gates, access control and operators rated for continuous duty.
 summary: Slide and swing gates for yards, facilities and communities, with operators and access control rated for the traffic.
 lede: A commercial gate cycles hundreds of times a day and gets hit by things that weigh forty tons. It is specified differently from a residential gate, and it should be.
 division: gates

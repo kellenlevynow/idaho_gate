@@ -2,7 +2,7 @@
 title: Custom driveway gates
 navTitle: Driveway gates
 seoTitle: Custom driveway gates in North Idaho
-description: Custom driveway gates designed, fabricated and installed in North Idaho. Swing and sliding gates in steel and aluminum, built for your opening, grade and snow.
+description: Custom driveway gates designed, built and installed in North Idaho. Swing and sliding gates in steel and aluminum for your opening, grade and snow.
 summary: Swing and sliding gates built around your opening, your grade and your winter.
 lede: A driveway gate has to fit an opening nobody else has. Ours start with a tape measure and a level on your site, and end with a gate that closes square in January.
 division: gates

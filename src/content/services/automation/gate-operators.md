@@ -2,7 +2,7 @@
 title: Gate operators and openers
 navTitle: Gate operators
 seoTitle: Gate operators and openers, installed
-description: Swing and slide gate operators selected and installed in North Idaho. Sized for gate weight, cycle count and climate, with battery backup and safety devices.
+description: Swing and slide gate operators installed in North Idaho. Sized for gate weight, cycle count and climate, with battery backup and safety devices.
 summary: Swing and slide operators sized for the gate's real weight, use and climate.
 lede: An operator is the muscle of an automated gate. Pick it for the gate you have, the traffic it sees and the winters it runs in, and it will be the part you never think about.
 division: automation

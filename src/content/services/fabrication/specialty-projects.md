@@ -2,7 +2,7 @@
 title: Specialty fabrication projects
 navTitle: Specialty projects
 seoTitle: Specialty and one-off metal fabrication
-description: One-off and specialty metal fabrication in North Idaho. Custom furniture bases, fire features, prototypes, repairs and the projects that do not fit a category.
+description: One-off and specialty metal fabrication in North Idaho. Furniture bases, fire features, prototypes, repairs and projects that fit no category.
 summary: One-offs, prototypes and the jobs that do not fit a category.
 lede: Some of the best work starts with "I do not know who builds this." If it is metal and it is unusual, ask us.
 division: fabrication

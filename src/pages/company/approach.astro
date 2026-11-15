@@ -1,0 +1,87 @@
+---
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import PageHero from '@/components/PageHero.astro';
+import Drawing from '@/components/Drawing.astro';
+import RelatedLinks from '@/components/RelatedLinks.astro';
+import { site } from '@/site.config';
+import { breadcrumbSchema } from '@/lib/schema';
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Company', path: '/company/about/' }, { name: 'Our approach', path: '/company/approach/' }];
+const steps = [
+  { t: 'Consult', who: 'You and us, by phone', d: 'We ask what you want the gate or the metalwork to do, where it is, and roughly when and what you want to spend. Ten minutes. If we are not a fit, you find out now.', out: 'A site visit on the calendar' },
+  { t: 'Measure', who: 'On your site', d: 'Tape, level and often a laser. Opening, grade, swing or slide room, setback, power, soil, snow. We look at the house and anything the work should match.', out: 'Field dimensions and photos' },
+  { t: 'Design', who: 'In the office', d: 'We draw it to scale: an elevation, and a plan where clearances matter. Custom panels and signs are drawn as cut files. You see exactly what you are buying.', out: 'A concept drawing and a written, itemized quote' },
+  { t: 'Approve', who: 'You', d: 'We revise until it is right. If an HOA or a fire agency needs to see it, the drawing goes to them. Nothing is ordered or cut until you sign off.', out: 'An approved drawing and scope' },
+  { t: 'Fabricate', who: 'In the shop', d: 'Material is cut, frames are fitted square on fixtures, joints are welded in sequence, infill and hardware mounts go in, and the piece is test-fitted.', out: 'A finished assembly, ready for coating' },
+  { t: 'Finish', who: 'In the shop and at the coater', d: 'Blast, prime and coat, or galvanize first where the scope calls for it. Finishing has its own lead time and it is not the place to hurry.', out: 'A coated gate or assembly' },
+  { t: 'Install', who: 'On your site', d: 'Footings below frost, posts plumb, concrete cured. Then the gate is hung, leveled and adjusted until it closes clean.', out: 'A working manual gate' },
+  { t: 'Automate', who: 'On your site', d: 'Operators, safety devices, keypad, intercom and exit sensor. Limits, force and timing are set and every safety device is tested.', out: 'A working automated entrance' },
+  { t: 'Hand over', who: 'You and us', d: 'A walkthrough of every control, the manual release, the safety test and the seasonal checks. You get the manuals and our number.', out: 'A gate you know how to run' },
+];
+---
+<Base
+  title="Our approach: how a project runs"
+  description="How Idaho Gate Co. runs a gate or fabrication project. Nine steps from the first call through measuring, drawing, fabrication, install and handover."
+  schema={[breadcrumbSchema(crumbs), {
+    '@context': 'https://schema.org', '@type': 'HowTo', name: 'How a custom gate project runs',
+    step: steps.map((s, i) => ({ '@type': 'HowToStep', position: i + 1, name: s.t, text: s.d })),
+  }]}
+>
+  <PageHero crumbs={crumbs} eyebrow="Our approach" title={`Concept, design, fabrication, <span class="serif-accent text-ember-400">install.</span> In that order.`} lede="Most trouble on a gate project comes from doing things out of sequence. Stone before steel. Concrete before conduit. Cutting before drawing. We run every job the same way so that does not happen.">
+    <div slot="actions" class="mt-8 flex flex-wrap gap-3">
+      <a href="/quote/" class="btn btn-lg" data-cta="approach_quote">Start with step one <Icon name="arrow" /></a>
+      <a href={`tel:${site.contact.phoneTel}`} class="btn btn-lg btn-ghost-dark"><Icon name="phone" /> {site.contact.phoneDisplay}</a>
+    </div>
+  </PageHero>
+
+  <section class="surface-paper on-light section">
+    <div class="wrap">
+      <ol class="process">
+        {steps.map((s, i) => (
+          <li class="process-step grid gap-x-10 gap-y-3 border-t border-ink-900/15 py-8 lg:grid-cols-12" data-reveal>
+            <div class="lg:col-span-3">
+              <span class="tech text-ember-600">Step {String(i + 1).padStart(2, '0')}</span>
+              <h2 class="h2 mt-1">{s.t}</h2>
+            </div>
+            <div class="lg:col-span-6">
+              <p class="tech text-steel-500">{s.who}</p>
+              <p class="mt-2 max-w-xl text-[1.08rem] leading-relaxed">{s.d}</p>
+            </div>
+            <div class="lg:col-span-3">
+              <p class="tech text-steel-500">You end up with</p>
+              <p class="mt-2 flex gap-2 font-[600] leading-snug"><span class="mt-1 text-ember-600"><Icon name="check" size={14} /></span>{s.out}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="surface-dark section">
+    <div class="wrap grid items-center gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <p class="eyebrow text-ember-400">What we commit to</p>
+        <h2 class="h2 mt-4">Five things you can hold us to.</h2>
+        <ul class="mt-8 space-y-5">
+          {[
+            ['A call back', `Within ${site.contact.responseTime} of your request.`],
+            ['A free site visit', 'In our core and extended service areas.'],
+            ['A drawing before fabrication', 'On every gate and every fabrication job beyond the simplest part.'],
+            ['A written, itemized quote', 'With inclusions and exclusions stated.'],
+            ['A straight answer', 'On what your site allows and what it will cost to do properly.'],
+          ].map(([t, b]) => (
+            <li class="flex gap-4 border-t border-white/12 pt-5">
+              <span class="mt-1 text-ember-400"><Icon name="check" /></span>
+              <span><span class="block font-[640] [font-stretch:108%]">{t}</span><span class="mt-1 block text-steel-300">{b}</span></span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="lg:col-span-6 lg:col-start-7">
+        <div class="sheet sheet-dark bg-ink-900"><Drawing preset="driveway-picket" view="plan" theme="dark" /></div>
+        <p class="tech mt-3 text-steel-400">A plan like this comes with the quote · concept, not for construction</p>
+      </div>
+    </div>
+  </section>
+  <RelatedLinks paths={['/resources/what-to-expect-during-install/', '/company/design-engineering/', '/company/fabrication-process/', '/resources/measuring-your-opening/', '/resources/custom-gate-cost/', '/quote/']} heading="Related" tone="light" />
+</Base>
