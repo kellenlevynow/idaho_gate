@@ -1,0 +1,19 @@
+---
+/** Idaho silhouette mark plus wordmark. Drawn clean as SVG, no textures. */
+interface Props { class?: string; markOnly?: boolean }
+import { IDAHO_PATH } from '@/data/idaho';
+const { class: cls = '', markOnly = false } = Astro.props;
+---
+<span class:list={['inline-flex items-center gap-3 leading-none', cls]}>
+  <svg viewBox="0 0 63.3 100" class="h-9 w-auto shrink-0 lg:h-10" aria-hidden="true">
+    <path d={IDAHO_PATH} fill="currentColor" />
+    <!-- two gate leaves cut through the state, the brand idea in one stroke -->
+    <path d="M20 72 v18 M26 72 v18 M32 72 v18 M38 72 v18 M44 72 v18" stroke="var(--color-ember-500)" stroke-width="2.6" fill="none" />
+  </svg>
+  {!markOnly && (
+    <span class="flex flex-col">
+      <span class="text-[1.02rem] font-[780] uppercase tracking-[0.06em] [font-stretch:122%] lg:text-[1.12rem]">Idaho Gate Co.</span>
+      <span class="mt-1 hidden font-mono text-[0.58rem] uppercase tracking-[0.2em] opacity-70 sm:block">Gates · Automation · Fabrication</span>
+    </span>
+  )}
+</span>

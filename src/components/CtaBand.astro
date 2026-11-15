@@ -1,0 +1,36 @@
+---
+/** Closing conversion section used at the end of every page. */
+import { site } from '@/site.config';
+import Icon from './Icon.astro';
+import QuickQuote from './QuickQuote.astro';
+import TrustStrip from './TrustStrip.astro';
+import type { InquiryPath } from '@/data/nav';
+interface Props { heading?: string; body?: string; path?: InquiryPath; context?: string }
+const {
+  heading = 'Tell us about the opening.',
+  body = 'A few details is enough to start. We will call to set up a site visit, measure the opening and come back with a drawing and a written quote.',
+  path = 'gates',
+  context = '',
+} = Astro.props;
+const quoteHref = path === 'gates' ? '/quote/' : `/quote/?path=${path}`;
+---
+<section class="surface-black grid-dark relative overflow-hidden" data-track-location="cta_band" aria-labelledby="cta-band-h">
+  <div class="wrap section grid gap-14 lg:grid-cols-12 lg:gap-10">
+    <div class="lg:col-span-6" data-reveal>
+      <p class="eyebrow text-ember-400">Start a project</p>
+      <h2 id="cta-band-h" class="display-sm mt-6" set:html={heading} />
+      <p class="lede mt-6 max-w-xl text-steel-200">{body}</p>
+      <div class="mt-9 flex flex-wrap gap-3">
+        <a href={quoteHref} class="btn btn-lg" data-cta="band_quote">Start a full quote <Icon name="arrow" /></a>
+        <a href={`tel:${site.contact.phoneTel}`} class="btn btn-lg btn-ghost-dark"><Icon name="phone" /> {site.contact.phoneDisplay}</a>
+      </div>
+      <div class="mt-9 max-w-xl"><TrustStrip /></div>
+    </div>
+    <div class="lg:col-span-5 lg:col-start-8" data-reveal style="--reveal-delay:120ms">
+      <div class="sheet sheet-dark bg-ink-900/80 p-6 sm:p-8">
+        <p class="tech mb-5 text-steel-400">Quick note · four fields</p>
+        <QuickQuote id="band" path={path} context={context} heading="Short on time? Send a quick note." />
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,372 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { site } from '@/site.config';
+import { enabledDivisions, companyLinks, industryLinks, resourceLinks, contactLinks } from '@/data/nav';
+import { getServices, servicePath } from '@/lib/content';
+
+interface Props { overlay?: boolean }
+const { overlay = false } = Astro.props;
+const services = await getServices();
+const path = Astro.url.pathname;
+const isActive = (prefix: string) => path.startsWith(prefix);
+
+const gates = enabledDivisions.find((d) => d.slug === 'gates');
+const automation = enabledDivisions.find((d) => d.slug === 'automation');
+const fabrication = enabledDivisions.find((d) => d.slug === 'fabrication');
+const inGroup = (division: string, group: string) =>
+  services.filter((s) => s.data.division === division && s.data.group === group);
+---
+<header
+  data-header
+  data-track-location="header"
+  class:list={['site-header fixed inset-x-0 top-0 z-50 text-bone', overlay && 'is-overlay']}
+>
+  <div class="wrap flex h-[var(--header-h)] items-center justify-between gap-6">
+    <a href="/" class="shrink-0 text-bone no-underline" aria-label={`${site.name} home`}>
+      <Logo />
+    </a>
+
+    <nav class="hidden xl:block" aria-label="Primary">
+      <ul class="flex items-center gap-1">
+        {gates && (
+          <li class="nav-item">
+            <button type="button" class:list={['nav-trigger', isActive('/gates') || isActive('/automation') ? 'is-active' : '']} data-menu-trigger aria-expanded="false" aria-controls="menu-gates">
+              Custom gates <Icon name="chevron" size={12} />
+            </button>
+            <div id="menu-gates" class="mega" hidden>
+              <div class="wrap grid grid-cols-12 gap-10 py-10">
+                <div class="col-span-3">
+                  <p class="tech text-ember-400">{gates.kicker}</p>
+                  <p class="h3 mt-3">Custom gates</p>
+                  <p class="mt-3 text-[0.95rem] leading-relaxed text-steel-300">{gates.summary}</p>
+                  <a href="/gates/" class="link-arrow mt-6 text-bone">All gate work <Icon name="arrow" /></a>
+                </div>
+                <div class="col-span-3">
+                  <p class="mega-label">Gate types</p>
+                  <ul class="mega-list">
+                    {inGroup('gates', 'types').map((s) => <li><a href={servicePath(s)}>{s.data.navTitle || s.data.title}</a></li>)}
+                  </ul>
+                </div>
+                <div class="col-span-3">
+                  <p class="mega-label">Finishing and service</p>
+                  <ul class="mega-list">
+                    {[...inGroup('gates', 'finishing'), ...inGroup('gates', 'service')].map((s) => <li><a href={servicePath(s)}>{s.data.navTitle || s.data.title}</a></li>)}
+                  </ul>
+                  <a href="/studio/" class="mega-feature mt-6">
+                    <span class="tech text-ember-400">Interactive</span>
+                    <span class="mt-1 block font-[640] [font-stretch:108%]">Gate studio</span>
+                    <span class="mt-1 block text-sm text-steel-300">Configure a gate in 3D, then send it with your quote.</span>
+                  </a>
+                </div>
+                {automation && (
+                  <div class="col-span-3">
+                    <p class="mega-label">Automation and access</p>
+                    <ul class="mega-list">
+                      {inGroup('automation', 'systems').map((s) => <li><a href={servicePath(s)}>{s.data.navTitle || s.data.title}</a></li>)}
+                      <li><a href="/automation/">Automation overview</a></li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+          </li>
+        )}
+        {fabrication && (
+          <li class="nav-item">
+            <button type="button" class:list={['nav-trigger', isActive('/fabrication') && 'is-active']} data-menu-trigger aria-expanded="false" aria-controls="menu-fab">
+              Fabrication <Icon name="chevron" size={12} />
+            </button>
+            <div id="menu-fab" class="mega" hidden>
+              <div class="wrap grid grid-cols-12 gap-10 py-10">
+                <div class="col-span-3">
+                  <p class="tech text-ember-400">{fabrication.kicker}</p>
+                  <p class="h3 mt-3">Metal fabrication</p>
+                  <p class="mt-3 text-[0.95rem] leading-relaxed text-steel-300">{fabrication.summary}</p>
+                  <a href="/fabrication/" class="link-arrow mt-6 text-bone">All fabrication <Icon name="arrow" /></a>
+                </div>
+                {fabrication.groups.map((g) => (
+                  <div class="col-span-3">
+                    <p class="mega-label">{g.label}</p>
+                    <ul class="mega-list">
+                      {inGroup('fabrication', g.key).map((s) => <li><a href={servicePath(s)}>{s.data.navTitle || s.data.title}</a></li>)}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </li>
+        )}
+        <li class="nav-item">
+          <button type="button" class:list={['nav-trigger', isActive('/industries') && 'is-active']} data-menu-trigger aria-expanded="false" aria-controls="menu-ind">
+            Industries <Icon name="chevron" size={12} />
+          </button>
+          <div id="menu-ind" class="mega" hidden>
+            <div class="wrap grid grid-cols-12 gap-10 py-10">
+              <div class="col-span-3">
+                <p class="tech text-ember-400">Who we build for</p>
+                <p class="h3 mt-3">Industries</p>
+                <p class="mt-3 text-[0.95rem] leading-relaxed text-steel-300">The same shop serves homeowners, ranches, builders and facilities. The scope changes. The standard does not.</p>
+              </div>
+              <div class="col-span-9">
+                <ul class="mega-list grid grid-cols-3 gap-x-10">
+                  {industryLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li><a href="/projects/" class:list={['nav-trigger', isActive('/projects') && 'is-active']}>Projects</a></li>
+        <li class="nav-item">
+          <button type="button" class:list={['nav-trigger', isActive('/company') && 'is-active']} data-menu-trigger aria-expanded="false" aria-controls="menu-co">
+            Company <Icon name="chevron" size={12} />
+          </button>
+          <div id="menu-co" class="mega" hidden>
+            <div class="wrap grid grid-cols-12 gap-10 py-10">
+              <div class="col-span-3">
+                <p class="tech text-ember-400">The shop</p>
+                <p class="h3 mt-3">Company</p>
+                <p class="mt-3 text-[0.95rem] leading-relaxed text-steel-300">A North Idaho fabrication shop that draws what it builds and installs what it draws.</p>
+              </div>
+              <div class="col-span-9">
+                <ul class="grid grid-cols-3 gap-x-10 gap-y-6">
+                  {companyLinks.map((l) => (
+                    <li>
+                      <a href={l.href} class="group block no-underline">
+                        <span class="block font-[620] [font-stretch:108%] group-hover:text-ember-400">{l.label}</span>
+                        <span class="mt-1 block text-sm text-steel-300">{l.note}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item">
+          <button type="button" class:list={['nav-trigger', (isActive('/resources') || isActive('/faq')) && 'is-active']} data-menu-trigger aria-expanded="false" aria-controls="menu-res">
+            Resources <Icon name="chevron" size={12} />
+          </button>
+          <div id="menu-res" class="mega" hidden>
+            <div class="wrap grid grid-cols-12 gap-10 py-10">
+              <div class="col-span-3">
+                <p class="tech text-ember-400">Plan the project</p>
+                <p class="h3 mt-3">Resources</p>
+                <p class="mt-3 text-[0.95rem] leading-relaxed text-steel-300">Guides written from the shop floor. Read before you request quotes from anyone.</p>
+              </div>
+              <div class="col-span-6">
+                <p class="mega-label">Guides</p>
+                <ul class="mega-list grid grid-cols-2 gap-x-10">
+                  {resourceLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+                </ul>
+              </div>
+              <div class="col-span-3">
+                <p class="mega-label">Get in touch</p>
+                <ul class="mega-list">
+                  {contactLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <a href={`tel:${site.contact.phoneTel}`} class="hidden items-center gap-2 text-[0.95rem] font-[620] text-bone no-underline hover:text-ember-400 md:inline-flex" aria-label={`Call ${site.name} at ${site.contact.phoneDisplay}`}>
+        <Icon name="phone" /> <span class="[font-stretch:108%] tabular-nums">{site.contact.phoneDisplay}</span>
+      </a>
+      <a href="/quote/" class="btn btn-sm hidden sm:inline-flex" data-cta="header_quote">Request a quote</a>
+      <button type="button" class="grid h-11 w-11 place-items-center border border-white/25 text-bone xl:hidden" data-drawer-toggle aria-expanded="false" aria-controls="mobile-drawer" aria-label="Menu">
+        <span class="icon-open"><Icon name="menu" size={18} /></span>
+        <span class="icon-close"><Icon name="close" size={18} /></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile drawer -->
+  <div id="mobile-drawer" class="drawer xl:hidden" hidden data-track-location="mobile_menu">
+    <nav class="wrap pb-32 pt-4" aria-label="Mobile">
+      <details class="drawer-group" open>
+        <summary>Custom gates <Icon name="chevron" /></summary>
+        <ul>
+          <li><a href="/gates/">All custom gates</a></li>
+          {services.filter((s) => s.data.division === 'gates').map((s) => <li><a href={servicePath(s)}>{s.data.navTitle || s.data.title}</a></li>)}
+          <li><a href="/studio/">Gate studio (3D)</a></li>
+        </ul>
+      </details>
+      <details class="drawer-group">
+        <summary>Automation <Icon name="chevron" /></summary>
+        <ul>
+          <li><a href="/automation/">Automation overview</a></li>
+          {services.filter((s) => s.data.division === 'automation').map((s) => <li><a href={servicePath(s)}>{s.data.navTitle || s.data.title}</a></li>)}
+        </ul>
+      </details>
+      <details class="drawer-group">
+        <summary>Fabrication <Icon name="chevron" /></summary>
+        <ul>
+          <li><a href="/fabrication/">All fabrication</a></li>
+          {services.filter((s) => s.data.division === 'fabrication').map((s) => <li><a href={servicePath(s)}>{s.data.navTitle || s.data.title}</a></li>)}
+        </ul>
+      </details>
+      <details class="drawer-group">
+        <summary>Industries <Icon name="chevron" /></summary>
+        <ul>{industryLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+      </details>
+      <details class="drawer-group">
+        <summary>Company <Icon name="chevron" /></summary>
+        <ul>{companyLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+      </details>
+      <details class="drawer-group">
+        <summary>Resources <Icon name="chevron" /></summary>
+        <ul>{resourceLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+      </details>
+      <ul class="mt-2 border-t border-white/10">
+        <li><a class="drawer-link" href="/projects/">Projects</a></li>
+        <li><a class="drawer-link" href="/service-area/">Service area</a></li>
+        <li><a class="drawer-link" href="/contact/">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style is:global>
+  .site-header {
+    background: rgb(19 20 21 / 0.94);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgb(255 255 255 / 0.08);
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+  .site-header.is-overlay:not(.is-scrolled):not(.menu-open) {
+    background: linear-gradient(rgb(13 13 14 / 0.6), transparent);
+    backdrop-filter: none;
+    border-bottom-color: transparent;
+  }
+  .drawer-open .site-header {
+    background: var(--color-ink-900) !important;
+  }
+  .nav-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-stretch: 110%;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--color-bone);
+    text-decoration: none;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    position: relative;
+  }
+  .nav-trigger::after {
+    content: '';
+    position: absolute;
+    left: 0.8rem;
+    right: 0.8rem;
+    bottom: 0.25rem;
+    height: 1px;
+    background: var(--color-ember-400);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s var(--ease-out-expo);
+  }
+  .nav-trigger:hover::after,
+  .nav-trigger[aria-expanded='true']::after,
+  .nav-trigger.is-active::after {
+    transform: scaleX(1);
+  }
+  .nav-trigger svg {
+    transition: transform 0.2s;
+    opacity: 0.7;
+  }
+  .nav-trigger[aria-expanded='true'] svg {
+    transform: rotate(180deg);
+  }
+  .mega {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    background: var(--color-ink-900);
+    border-top: 1px solid rgb(255 255 255 / 0.08);
+    border-bottom: 1px solid rgb(255 255 255 / 0.12);
+    box-shadow: 0 30px 60px rgb(0 0 0 / 0.45);
+    animation: mega-in 0.25s var(--ease-out-expo);
+  }
+  @keyframes mega-in {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: none; }
+  }
+  .mega-label {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-steel-400);
+    padding-bottom: 0.7rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid rgb(255 255 255 / 0.12);
+  }
+  .mega-list a {
+    display: block;
+    padding: 0.42rem 0;
+    font-size: 0.98rem;
+    color: var(--color-bone);
+    text-decoration: none;
+    transition: color 0.15s, padding-left 0.25s var(--ease-out-expo);
+  }
+  .mega-list a:hover {
+    color: var(--color-ember-400);
+    padding-left: 0.4rem;
+  }
+  .mega-feature {
+    display: block;
+    padding: 0.9rem 1rem;
+    border: 1px solid rgb(255 255 255 / 0.14);
+    text-decoration: none;
+    color: var(--color-bone);
+    transition: border-color 0.2s;
+  }
+  .mega-feature:hover {
+    border-color: var(--color-ember-400);
+  }
+  [data-drawer-toggle] .icon-close { display: none; }
+  [data-drawer-toggle][aria-expanded='true'] .icon-open { display: none; }
+  [data-drawer-toggle][aria-expanded='true'] .icon-close { display: block; }
+  .drawer {
+    position: fixed;
+    inset: var(--header-h) 0 0 0;
+    background: var(--color-ink-900);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .drawer-open { overflow: hidden; }
+  .drawer-group { border-bottom: 1px solid rgb(255 255 255 / 0.1); }
+  .drawer-group summary,
+  .drawer-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 3.5rem;
+    font-size: 1.05rem;
+    font-weight: 640;
+    font-stretch: 110%;
+    color: var(--color-bone);
+    text-decoration: none;
+    list-style: none;
+  }
+  .drawer-link { border-bottom: 1px solid rgb(255 255 255 / 0.1); }
+  .drawer-group[open] summary svg { transform: rotate(180deg); }
+  .drawer-group ul { padding-bottom: 0.9rem; }
+  .drawer-group li a {
+    display: block;
+    padding: 0.6rem 0 0.6rem 1rem;
+    color: var(--color-steel-200);
+    text-decoration: none;
+    border-left: 1px solid rgb(255 255 255 / 0.14);
+  }
+</style>

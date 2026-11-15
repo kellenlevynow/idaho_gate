@@ -1,0 +1,17 @@
+---
+interface Props { name: 'arrow' | 'phone' | 'menu' | 'close' | 'chevron' | 'check' | 'plus' | 'upload' | 'mail' | 'pin'; class?: string; size?: number }
+const { name, class: cls = '', size = 16 } = Astro.props;
+const paths: Record<string, string> = {
+  arrow: 'M2 8h11M9 3.5 13.5 8 9 12.5',
+  phone: 'M3.2 1.8h2.6l1.3 3.3-1.6 1.2a8.6 8.6 0 0 0 4.2 4.2l1.2-1.6 3.3 1.3v2.6a1.4 1.4 0 0 1-1.5 1.4C6.4 13.8 2.2 9.6 1.8 3.3a1.4 1.4 0 0 1 1.4-1.5Z',
+  menu: 'M1.5 4.5h13M1.5 8h13M1.5 11.5h13',
+  close: 'M3 3l10 10M13 3 3 13',
+  chevron: 'M4 6l4 4 4-4',
+  check: 'M2.5 8.5 6.2 12 13.5 4',
+  plus: 'M8 2.5v11M2.5 8h11',
+  upload: 'M8 11V2.5M4.5 6 8 2.5 11.5 6M2.5 10.5v3h11v-3',
+  mail: 'M1.8 3.5h12.4v9H1.8zM1.8 4l6.2 5 6.2-5',
+  pin: 'M8 14.2s4.5-4.2 4.5-7.7a4.5 4.5 0 1 0-9 0c0 3.500 4.5 7.700 4.500 7.700ZM8 8.200a1.700 1.700 0 1 0 0-3.400 1.700 1.700 0 0 0 0 3.400Z',
+};
+---
+<svg class:list={['arrow-icon shrink-0', name === 'arrow' && 'arrow', cls]} width={size} height={size} viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><path d={paths[name]} /></svg>

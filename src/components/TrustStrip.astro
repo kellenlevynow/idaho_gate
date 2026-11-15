@@ -1,0 +1,24 @@
+---
+/**
+ * Trust points beside every CTA. Process facts are always shown.
+ * Licence, insurance, warranty and brand lines appear only once the
+ * owner confirms them in site.config.ts, so nothing here is invented.
+ */
+import { site } from '@/site.config';
+import Icon from './Icon.astro';
+interface Props { tone?: 'dark' | 'light'; compact?: boolean }
+const { tone = 'dark', compact = false } = Astro.props;
+const t = site.trust;
+const items: string[] = ['Free site visit and written quote', 'Drawings approved before we cut steel', 'Designed, built and installed by one shop'];
+if (t.idahoContractorRegistration) items.push(`Idaho registered contractor ${t.idahoContractorRegistration}`);
+if (t.insured) items.push('Fully insured');
+if (t.warrantySummary) items.push(t.warrantySummary);
+if (t.automationBrandsConfirmed) items.push(`${t.automationBrands.join(' and ')} operators`);
+---
+<ul class:list={['flex flex-wrap gap-x-6 gap-y-2', compact ? 'text-[0.8rem]' : 'text-[0.88rem]', tone === 'dark' ? 'text-steel-300' : 'text-steel-500']}>
+  {items.map((i) => (
+    <li class="inline-flex items-center gap-2">
+      <span class={tone === 'dark' ? 'text-ember-400' : 'text-ember-600'}><Icon name="check" size={13} /></span>{i}
+    </li>
+  ))}
+</ul>

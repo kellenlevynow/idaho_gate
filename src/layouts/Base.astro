@@ -1,0 +1,89 @@
+---
+import '@/styles/global.css';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import MobileBar from '@/components/MobileBar.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import { site } from '@/site.config';
+import { businessSchema, websiteSchema } from '@/lib/schema';
+import type { InquiryPath } from '@/data/nav';
+
+interface Props {
+  title: string;
+  description: string;
+  /** JSON-LD objects for this page, added to the sitewide business schema */
+  schema?: object[];
+  ogImage?: string;
+  noindex?: boolean;
+  /** header floats over a dark hero */
+  overlayHeader?: boolean;
+  /** hide the closing CTA band (quote and thank-you pages) */
+  hideCta?: boolean;
+  cta?: { heading?: string; body?: string; path?: InquiryPath; context?: string };
+  /** service key stored for attribution, e.g. "gates/driveway-gates" */
+  service?: string;
+  preloadImage?: string;
+}
+const {
+  title, description, schema = [], ogImage = '/og/default.jpg', noindex = false,
+  overlayHeader = false, hideCta = false, cta = {}, service = '', preloadImage,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, site.url).toString();
+const fullTitle = title.includes(site.name) ? title : `${title} | ${site.name}`;
+const robots = noindex || !site.launchReady ? 'noindex, nofollow' : 'index, follow, max-image-preview:large';
+const og = new URL(ogImage, site.url).toString();
+const jsonLd = [businessSchema(), websiteSchema(), ...schema];
+const t = site.tracking;
+---
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content={robots} />
+    <meta name="theme-color" content="#131415" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin />
+    {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={og} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={og} />
+    <meta name="geo.region" content="US-ID" />
+
+    <script is:inline set:html={`window.__IGC__=${JSON.stringify(t)};document.documentElement.classList.add('js');`} />
+    {jsonLd.map((s) => <script is:inline type="application/ld+json" set:html={JSON.stringify(s)} />)}
+    <slot name="head" />
+  </head>
+  <body data-service={service}>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header overlay={overlayHeader} />
+    <main id="main" class:list={[!overlayHeader && 'pt-[var(--header-h)]']}>
+      <slot />
+    </main>
+    {!hideCta && <CtaBand {...cta} />}
+    <Footer />
+    <MobileBar />
+    {t.gtmId && (
+      <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${t.gtmId}`} height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+    )}
+    <script>
+      import '@/scripts/app';
+      import '@/scripts/quick-form';
+    </script>
+  </body>
+</html>

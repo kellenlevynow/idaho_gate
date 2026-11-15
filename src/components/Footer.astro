@@ -1,0 +1,100 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { site, serviceTowns } from '@/site.config';
+import { enabledDivisions, companyLinks, industryLinks, resourceLinks } from '@/data/nav';
+import { getServices, servicePath } from '@/lib/content';
+const services = await getServices();
+const year = new Date().getFullYear();
+const areaPages = serviceTowns.filter((t) => t.page);
+---
+<footer class="surface-black border-t border-white/10 pb-24 lg:pb-0" data-track-location="footer">
+  <div class="wrap pt-16 lg:pt-20">
+    <div class="grid gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-4">
+        <a href="/" class="inline-block text-bone no-underline" aria-label={`${site.name} home`}><Logo /></a>
+        <p class="mt-6 max-w-sm text-[0.98rem] leading-relaxed text-steel-300">{site.tagline} Serving Kootenai, Bonner, Boundary and Shoshone counties, with project work into Eastern Washington and Western Montana.</p>
+        <ul class="mt-7 space-y-3 text-[1.02rem]">
+          <li><a class="inline-flex items-center gap-3 font-[640] text-bone no-underline hover:text-ember-400" href={`tel:${site.contact.phoneTel}`}><Icon name="phone" /> <span class="tabular-nums">{site.contact.phoneDisplay}</span></a></li>
+          <li><a class="inline-flex items-center gap-3 text-bone no-underline hover:text-ember-400" href={`mailto:${site.contact.email}`}><Icon name="mail" /> {site.contact.email}</a></li>
+          <li class="inline-flex items-center gap-3 text-steel-300"><Icon name="pin" /> {site.contact.region} · {site.contact.hours}</li>
+        </ul>
+        <a href="/quote/" class="btn mt-8" data-cta="footer_quote">Request a quote <Icon name="arrow" /></a>
+        {(site.social.facebook || site.social.instagram) && (
+          <ul class="mt-6 flex gap-5 text-sm">
+            {site.social.facebook && <li><a class="text-steel-300 hover:text-bone" href={site.social.facebook} rel="noopener">Facebook</a></li>}
+            {site.social.instagram && <li><a class="text-steel-300 hover:text-bone" href={site.social.instagram} rel="noopener">Instagram</a></li>}
+          </ul>
+        )}
+      </div>
+
+      <nav class="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:col-span-8 lg:grid-cols-4" aria-label="Footer">
+        {enabledDivisions.map((d) => (
+          <div>
+            <p class="foot-h"><a href={`/${d.slug}/`}>{d.name}</a></p>
+            <ul class="foot-list">
+              {services.filter((s) => s.data.division === d.slug).map((s) => <li><a href={servicePath(s)}>{s.data.navTitle || s.data.title}</a></li>)}
+            </ul>
+          </div>
+        ))}
+        <div>
+          <p class="foot-h">Industries</p>
+          <ul class="foot-list">{industryLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+          <p class="foot-h mt-9">Company</p>
+          <ul class="foot-list">
+            {companyLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+            <li><a href="/projects/">Projects</a></li>
+          </ul>
+        </div>
+        <div class="col-span-2 sm:col-span-1">
+          <p class="foot-h">Resources</p>
+          <ul class="foot-list">{resourceLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+        </div>
+        <div class="col-span-2 sm:col-span-2 lg:col-span-3">
+          <p class="foot-h"><a href="/service-area/">Service area</a></p>
+          <ul class="foot-list flex flex-wrap gap-x-6">
+            {areaPages.map((t) => <li><a href={`/service-area/${t.page}/`}>{t.page === 'silver-valley' ? 'Silver Valley' : t.name}, {t.state}</a></li>)}
+            <li><a href="/service-area/eastern-washington/">Eastern Washington</a></li>
+            <li><a href="/service-area/western-montana/">Western Montana</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <div class="tick-rule mt-16 text-bone"></div>
+    <div class="flex flex-col gap-4 py-7 text-[0.82rem] text-steel-400 md:flex-row md:items-center md:justify-between">
+      <p>© {year} {site.legalName}. Renderings and drawings on this site are concept visuals unless labeled as completed work.</p>
+      <ul class="flex flex-wrap gap-x-6 gap-y-2">
+        <li><a class="hover:text-bone" href="/privacy/">Privacy</a></li>
+        <li><a class="hover:text-bone" href="/terms/">Terms</a></li>
+        <li><a class="hover:text-bone" href="/sitemap-index.xml">Sitemap</a></li>
+      </ul>
+    </div>
+    {!site.launchReady && (
+      <p class="border-t border-dashed border-white/20 py-4 font-mono text-[0.68rem] uppercase tracking-[0.12em] text-ember-400">Preview build. Phone, email and hours are placeholders until confirmed. Pages are not indexed.</p>
+    )}
+  </div>
+</footer>
+
+<style>
+  .foot-h {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-steel-400);
+    padding-bottom: 0.7rem;
+    margin-bottom: 0.6rem;
+    border-bottom: 1px solid rgb(255 255 255 / 0.12);
+  }
+  .foot-h a { color: inherit; text-decoration: none; }
+  .foot-h a:hover { color: var(--color-bone); }
+  .foot-list a {
+    display: inline-block;
+    padding: 0.28rem 0;
+    font-size: 0.92rem;
+    color: var(--color-steel-200);
+    text-decoration: none;
+  }
+  .foot-list a:hover { color: var(--color-ember-400); }
+</style>

@@ -1,0 +1,17 @@
+---
+/** Sticky bottom bar on phones: call and quote, always one thumb tap away. */
+import { site } from '@/site.config';
+import Icon from './Icon.astro';
+---
+<div class="mobile-bar fixed inset-x-0 bottom-0 z-40 grid grid-cols-2 border-t border-white/15 bg-ink-950/95 backdrop-blur lg:hidden" data-track-location="mobile_bar">
+  <a href={`tel:${site.contact.phoneTel}`} class="flex min-h-[3.75rem] items-center justify-center gap-2.5 text-[0.82rem] font-[640] uppercase tracking-[0.08em] text-bone no-underline [font-stretch:110%]" aria-label={`Call ${site.contact.phoneDisplay}`}>
+    <Icon name="phone" /> Call
+  </a>
+  <a href="/quote/" class="flex min-h-[3.75rem] items-center justify-center gap-2.5 bg-ember-600 text-[0.82rem] font-[640] uppercase tracking-[0.08em] text-white no-underline [font-stretch:110%]" data-cta="mobile_bar_quote">
+    Get a quote <Icon name="arrow" />
+  </a>
+</div>
+<style>
+  .mobile-bar { padding-bottom: env(safe-area-inset-bottom); }
+  :global(.drawer-open) .mobile-bar { z-index: 60; }
+</style>

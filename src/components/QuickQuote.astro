@@ -1,0 +1,42 @@
+---
+/** Short four-field form for footers and sidebars. Posts to /api/lead. */
+import { site } from '@/site.config';
+import Icon from './Icon.astro';
+import type { InquiryPath } from '@/data/nav';
+interface Props { tone?: 'dark' | 'light'; path?: InquiryPath; id: string; heading?: string; context?: string }
+const { tone = 'dark', path = 'gates', id, heading, context = '' } = Astro.props;
+const f = tone === 'dark' ? 'field field-dark' : 'field';
+---
+<form class="quick-form" data-quick-form data-path={path} data-context={context} novalidate aria-labelledby={heading ? `${id}-h` : undefined} data-track-location={`quick_form_${id}`}>
+  {heading && <p id={`${id}-h`} class="h3 mb-5">{heading}</p>}
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div>
+      <label class="field-label" for={`${id}-name`}>Name</label>
+      <input class={f} id={`${id}-name`} name="name" type="text" autocomplete="name" required />
+    </div>
+    <div>
+      <label class="field-label" for={`${id}-phone`}>Phone</label>
+      <input class={f} id={`${id}-phone`} name="phone" type="tel" autocomplete="tel" inputmode="tel" required />
+    </div>
+    <div class="sm:col-span-2">
+      <label class="field-label" for={`${id}-city`}>Project city or town</label>
+      <input class={f} id={`${id}-city`} name="city" type="text" autocomplete="address-level2" required />
+    </div>
+    <div class="sm:col-span-2">
+      <label class="field-label" for={`${id}-msg`}>What are you planning?</label>
+      <textarea class={f} id={`${id}-msg`} name="message" rows="3" required placeholder="Opening width, gate style, automation, timing. Whatever you know so far."></textarea>
+    </div>
+  </div>
+  <div class="hp-field" aria-hidden="true">
+    <label>Company website <input type="text" name="company_website" tabindex="-1" autocomplete="off" /></label>
+  </div>
+  <div class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3">
+    <button type="submit" class="btn" data-submit>
+      <span data-label>Send it over</span> <Icon name="arrow" />
+    </button>
+    <p class:list={['text-sm', tone === 'dark' ? 'text-steel-300' : 'text-steel-500']}>
+      Or call <a class="font-[620] underline" href={`tel:${site.contact.phoneTel}`}>{site.contact.phoneDisplay}</a>
+    </p>
+  </div>
+  <p class="field-error mt-4 hidden" role="alert" data-form-error></p>
+</form>
