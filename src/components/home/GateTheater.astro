@@ -1,0 +1,220 @@
+---
+/**
+ * Homepage signature experience.
+ * Three tiers, chosen before first paint so nothing shifts:
+ *   1. No JS or reduced motion: six stacked stages with rendered stills.
+ *   2. JS without WebGL: sticky theater, stills crossfade with scroll.
+ *   3. WebGL: the stills are replaced by the live scroll-driven 3D scene.
+ */
+import { Picture } from 'astro:assets';
+import Icon from '@/components/Icon.astro';
+import { site } from '@/site.config';
+import { finishes } from '@/three/finish-data';
+
+const land = import.meta.glob<{ default: ImageMetadata }>('@/assets/renders/theater/*-land.jpg', { eager: true });
+const port = import.meta.glob<{ default: ImageMetadata }>('@/assets/renders/theater/*-port.jpg', { eager: true });
+const img = (set: Record<string, { default: ImageMetadata }>, key: string) =>
+  Object.entries(set).find(([p]) => p.includes(`/${key}-`))?.[1].default;
+
+const stages = [
+  { key: 'reveal', n: '00', label: 'Reveal', alt: 'Concept rendering of a custom double swing driveway gate with an arched top, plasma-cut mountain ridgeline panels and stone pillars at dusk' },
+  { key: 'drawing', n: '01', label: 'Drawing', title: 'It starts as a drawing.', body: 'Opening width, grade, swing clearance and post loads are worked out on paper first. You approve the drawing before we cut a single piece of steel.', alt: 'The same gate shown as a dimensioned engineering elevation drawing' },
+  { key: 'exploded', n: '02', label: 'Assembly', title: 'Every part has a job.', body: 'Frame, infill, panels, hinges, posts, footings and operators. Each one is sized for the load it carries and the weather it stands in.', alt: 'Exploded view of the gate separating frame, pickets, ridgeline panels, hinges, posts, footings and operators' },
+  { key: 'materials', n: '03', label: 'Material', title: 'Finished for real winters.', body: 'Powder coat over zinc-rich primer, weathering steel left to patina, or hot-dip galvanizing. Keep scrolling to compare them on the same panel.', alt: 'Close view of the plasma-cut ridgeline panel and steel frame showing surface finish' },
+  { key: 'reassembly', n: '04', label: 'Fit-up', title: 'Fit, welded, hung true.', body: 'The leaves meet clean at center and stay that way, because posts and footings were designed with the gate and not after it.', alt: 'The gate reassembled and closed between its stone pillars' },
+  { key: 'opening', n: '05', label: 'Opening', title: 'Come on in.', body: 'Gates are where we started. The same shop builds railings, screens, enclosures and one-off steel and aluminum work.', alt: 'The gate leaves swinging open onto a driveway running toward the mountains' },
+];
+---
+<section class="theater surface-black" data-theater aria-label="Interactive gate walkthrough" data-track-location="hero">
+  <div class="theater-sticky">
+    <canvas class="theater-canvas" data-gate-canvas aria-hidden="true"></canvas>
+    <div class="theater-overlay" data-gate-overlay></div>
+    <div class="theater-shade" aria-hidden="true"></div>
+
+    {stages.map((s, i) => (
+      <article class:list={['stage', `stage-${s.key}`]} data-stage={i} data-stage-key={s.key}>
+        <div class="stage-still" aria-hidden={i === 0 ? undefined : 'true'}>
+          {img(land, s.key) && img(port, s.key) && (
+            <picture>
+              <Picture
+                src={img(land, s.key)!}
+                alt={s.alt}
+                formats={['avif', 'webp']}
+                widths={[640, 960, 1280, 1920]}
+                sizes="100vw"
+                loading={i === 0 ? 'eager' : 'lazy'}
+                fetchpriority={i === 0 ? 'high' : 'auto'}
+                class="still still-land"
+              />
+              <Picture
+                src={img(port, s.key)!}
+                alt=""
+                formats={['avif', 'webp']}
+                widths={[480, 720, 1080]}
+                sizes="100vw"
+                loading={i === 0 ? 'eager' : 'lazy'}
+                fetchpriority={i === 0 ? 'high' : 'auto'}
+                class="still still-port"
+              />
+            </picture>
+          )}
+        </div>
+
+        <div class="stage-copy wrap">
+          {i === 0 ? (
+            <div class="hero-copy">
+              <div class="hero-top">
+                <p class="eyebrow text-stone-200"><span class="sm:hidden">North Idaho · Custom gates</span><span class="hidden sm:inline">Custom gates · Automation · Fabrication</span></p>
+                <h1 class="display hero-h1 mt-5 text-bone">Built to<br />make an<br /><span class="serif-accent text-ember-400">entrance.</span></h1>
+              </div>
+              <div class="hero-bottom">
+                <p class="lede hero-lede max-w-[27rem] text-stone-200">Idaho Gate Co. designs, engineers and fabricates custom driveway gates and architectural metalwork for properties across North Idaho and the Inland Northwest.</p>
+                <div class="mt-7 flex flex-wrap items-center gap-3">
+                  <a href="/quote/" class="btn btn-lg" data-cta="hero_quote">Request a quote <Icon name="arrow" /></a>
+                  <a href={`tel:${site.contact.phoneTel}`} class="btn btn-lg btn-ghost-dark hero-call"><Icon name="phone" /> {site.contact.phoneDisplay}</a>
+                </div>
+                <p class="scroll-cue tech mt-8 text-stone-200"><span class="scroll-cue-line" aria-hidden="true"></span>Scroll to take this gate apart</p>
+              </div>
+            </div>
+          ) : (
+            <div class="stage-panel">
+              <p class="tech text-ember-400">{s.n} / {s.label}</p>
+              <h2 class="stage-h mt-3 text-bone">{s.title}</h2>
+              <p class="mt-4 max-w-[27rem] text-[1rem] leading-relaxed text-stone-200">{s.body}</p>
+              {s.key === 'exploded' && <ol class="callout-legend tech mt-5 text-stone-200" data-callout-legend></ol>}
+              {s.key === 'materials' && (
+                <div class="mt-6">
+                  <p class="tech text-steel-300">Finish shown</p>
+                  <p class="h3 mt-1 text-bone" data-finish-name aria-live="polite">{finishes[0].name}</p>
+                  <ul class="mt-4 flex gap-2" aria-hidden="true">
+                    {[finishes[0], finishes[2], finishes[3], finishes[1]].map((f) => (
+                      <li class="finish-chip" data-finish-chip={f.name} style={`--swatch:${f.swatch}`}></li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {s.key === 'drawing' && <a href="/company/design-engineering/" class="link-arrow mt-6 text-bone">How we design <Icon name="arrow" /></a>}
+              {s.key === 'opening' && (
+                <div class="mt-7 flex flex-wrap gap-3">
+                  <a href="#what-we-build" class="btn" data-cta="hero_see_work">See what we build <Icon name="arrow" /></a>
+                  <a href="/studio/" class="btn btn-ghost-dark" data-cta="hero_studio">Open the gate studio</a>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </article>
+    ))}
+
+    <p class="theater-tag concept-tag text-stone-200">Concept 01 · rendered, not a completed project</p>
+
+    <ol class="theater-rail" aria-hidden="true">
+      {stages.map((s, i) => <li data-rail={i}><span class="flex"><span class="tech">{s.n}</span><span class="rail-label tech">{s.label}</span></span></li>)}
+    </ol>
+    <div class="theater-flash" data-flash aria-hidden="true"></div>
+  </div>
+</section>
+
+<script>
+  import '@/scripts/theater';
+</script>
+
+<style is:global>
+  /* ---------- static (default) layout: stacked stages ---------- */
+  .theater { position: relative; }
+  .theater-canvas, .theater-overlay, .theater-rail, .theater-flash, .theater-shade, .theater-tag { display: none; }
+  .stage { position: relative; display: grid; min-height: 100svh; align-items: end; overflow: hidden; }
+  .stage + .stage { min-height: 82svh; border-top: 1px solid rgb(255 255 255 / 0.1); }
+  .stage-still { position: absolute; inset: 0; }
+  .stage-still picture, .stage-still img { width: 100%; height: 100%; object-fit: cover; }
+  .stage-still::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgb(13 13 14 / 0.86) 0%, rgb(13 13 14 / 0.25) 55%, rgb(13 13 14 / 0.35) 100%); }
+  .still-port { display: none; }
+  @media (max-aspect-ratio: 1/1) {
+    .still-land { display: none; }
+    .still-port { display: block; }
+  }
+  .hero-h1 { font-size: clamp(2.7rem, 6.1vw, 6.4rem); }
+  .hero-bottom { margin-top: 1.5rem; }
+  .legend-n { color: var(--color-ember-400); margin-right: 0.3em; }
+  .callout-t, .callout-d { text-shadow: 0 0 6px var(--color-ink-900), 0 0 14px var(--color-ink-900), 0 0 2px var(--color-ink-900); }
+  .stage-h { font-stretch: 120%; font-weight: 740; text-transform: uppercase; letter-spacing: -0.01em; line-height: 1; font-size: clamp(1.7rem, 2.9vw, 2.9rem); max-width: 30rem; }
+  .stage-copy { position: relative; padding-top: calc(var(--header-h) + 2rem); padding-bottom: clamp(5.5rem, 9vh, 7rem); }
+  .scroll-cue { display: none; align-items: center; gap: 0.9rem; }
+  .scroll-cue-line { width: 1px; height: 2.6rem; background: currentColor; transform-origin: top; animation: cue 2.2s var(--ease-out-expo) infinite; }
+  @keyframes cue { 0% { transform: scaleY(0); } 60% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
+  .callout-legend { display: none; }
+  .finish-chip { width: 2.4rem; height: 0.5rem; background: var(--swatch); border: 1px solid rgb(255 255 255 / 0.25); transition: transform 0.3s var(--ease-out-expo), border-color 0.3s; }
+  .finish-chip.is-on { border-color: var(--color-ember-400); transform: scaleY(2.2); }
+
+  /* ---------- live layout: sticky theater ---------- */
+  .theater-live .theater { height: 760vh; }
+  .theater-live .theater-sticky { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+  .theater-live .theater-canvas { display: block; position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.9s ease; }
+  .theater-live .theater.is-3d .theater-canvas { opacity: 1; }
+  .theater-live .theater-overlay { display: block; position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .theater-live .theater-shade { display: block; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to top, rgb(13 13 14 / 0.78) 0%, rgb(13 13 14 / 0) 46%), linear-gradient(to bottom, rgb(13 13 14 / 0.55) 0%, rgb(13 13 14 / 0) 22%); }
+  .theater-live .stage { position: absolute; inset: 0; min-height: 0; border: 0; pointer-events: none; opacity: 0; visibility: hidden; }
+  .theater-live .stage[data-stage='0'] { opacity: 1; visibility: visible; }
+  .theater-live .stage.is-set { opacity: var(--o, 0); visibility: var(--v, hidden); }
+  .theater-live .stage-copy { pointer-events: auto; transform: translateY(calc((1 - var(--o, 1)) * 14px)); }
+  .theater-live .stage-still { transition: opacity 0.6s ease; }
+  .theater-live .stage-still::after { display: none; }
+  .theater-live .theater.is-3d .stage-still { opacity: 0; }
+  .theater-live .scroll-cue { display: flex; }
+  .theater-live .theater-tag { display: inline-flex; position: absolute; top: calc(var(--header-h) + 1.25rem); right: var(--gutter); opacity: 0.75; }
+  .theater-live .theater-flash { display: block; position: absolute; inset: 0; background: var(--color-paper); opacity: 0; pointer-events: none; }
+  .theater-live .theater-rail { display: flex; gap: 0.35rem; position: absolute; right: var(--gutter); bottom: clamp(1.5rem, 4vh, 2.5rem); align-items: flex-end; }
+  .theater-rail li { display: flex; flex-direction: column; gap: 0.5rem; width: 2.1rem; color: var(--color-steel-400); transition: color 0.3s, width 0.5s var(--ease-out-expo); overflow: hidden; }
+  .theater-rail li::after { content: ''; height: 2px; background: currentColor; opacity: 0.6; }
+  .theater-rail .rail-label { display: none; white-space: nowrap; }
+  .theater-rail li.is-on { color: var(--color-bone); width: 6.5rem; }
+  .theater-rail li.is-on::after { background: var(--color-ember-400); opacity: 1; }
+  .theater-rail li.is-on .rail-label { display: inline; }
+  .theater-rail li > span { visibility: hidden; gap: 0.5em; }
+  .theater-rail li.is-on > span { visibility: visible; }
+  .theater-rail li.is-on > span > .tech:first-child { color: var(--color-ember-400); }
+  .theater-rail li .tech { line-height: 1; }
+  @media (max-width: 760px) {
+    .theater-live .theater { height: 680vh; }
+    .theater-live .theater-rail { display: none; }
+    .theater-live .theater-tag { font-size: 0.56rem; }
+    .theater-live .stage-copy { padding-bottom: 5.25rem; }
+    .theater-live .stage[data-stage='0'] { align-items: stretch; }
+    .theater-live .stage[data-stage='0'] .stage-copy { padding-top: calc(var(--header-h) + 3.2rem); padding-bottom: 4.6rem; }
+    .theater-live .hero-copy { display: flex; flex-direction: column; justify-content: space-between; height: 100%; }
+    .theater-live .hero-lede { font-size: 0.98rem; line-height: 1.45; }
+    .theater-live .hero-call { display: none; }
+    .theater-live .hero-bottom .btn { min-height: 3rem; }
+    .theater-live .scroll-cue { margin-top: 1rem; }
+    .theater-live .scroll-cue-line { height: 1.4rem; }
+    .theater-live .callout-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 0.3rem 1rem; }
+  }
+
+  /* dimension labels in the drawing stage */
+  .theater-dims, .theater-callouts, .theater-leaders { position: absolute; inset: 0; opacity: 0; visibility: hidden; }
+  .theater-leaders { width: 100%; height: 100%; }
+  .theater-leaders polyline { fill: none; stroke: var(--color-ember-400); stroke-width: 1; }
+  .theater-leaders circle { fill: var(--color-ember-400); }
+  .dim-label { position: absolute; left: 0; top: 0; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ember-400); white-space: nowrap; }
+  .dim-label::after { content: ''; }
+  .dim-label { margin: -1.5em 0 0 0; }
+  .dim-label:not(.is-vertical):not(.is-note) { transform-origin: 0 0; padding: 0 0.5em; margin-left: -6em; background: var(--color-ink-900); }
+  .dim-label.is-vertical { margin: -0.7em 0 0 0.9em; background: var(--color-ink-900); padding: 0 0.4em; }
+  .dim-label.is-note { color: var(--color-steel-300); margin-top: -0.6em; }
+  .dim-label.is-right { margin-left: 2.2em; }
+  .callout { position: absolute; left: 0; top: 0; width: min(250px, 20vw); margin-top: -0.7rem; color: var(--color-bone); }
+  .callout.is-right { margin-left: calc(-1 * min(250px, 20vw)); text-align: right; }
+  .callout-n { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.1em; color: var(--color-ember-400); margin-right: 0.6em; }
+  .callout-t { font-size: 0.86rem; font-weight: 640; font-stretch: 108%; }
+  .callout-d { display: block; font-size: 0.74rem; line-height: 1.35; color: var(--color-steel-300); margin-top: 0.15rem; }
+  @media (max-width: 1100px) { .callout-d { display: none; } }
+  @media (max-width: 760px) {
+    .callout { width: auto; margin: -0.75rem 0 0 -0.75rem; }
+    .callout.is-right { margin-left: -0.75rem; }
+    .callout-t { display: none; }
+    .callout-n { display: grid; place-items: center; width: 1.5rem; height: 1.5rem; margin: 0; border-radius: 50%; background: var(--color-ember-600); color: #fff; font-size: 0.6rem; letter-spacing: 0; }
+    .theater-leaders circle { display: none; }
+    .dim-label { font-size: 0.5rem; }
+    .dim-label.is-note { display: none; }
+  }
+</style>

@@ -65,7 +65,7 @@ const t = site.tracking;
     <meta name="twitter:image" content={og} />
     <meta name="geo.region" content="US-ID" />
 
-    <script is:inline set:html={`window.__IGC__=${JSON.stringify(t)};document.documentElement.classList.add('js');`} />
+    <script is:inline set:html={`window.__IGC__=${JSON.stringify(t)};var d=document.documentElement;d.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches)d.classList.add('theater-live');`} />
     {jsonLd.map((s) => <script is:inline type="application/ld+json" set:html={JSON.stringify(s)} />)}
     <slot name="head" />
   </head>
