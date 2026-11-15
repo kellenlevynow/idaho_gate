@@ -1,16 +1,23 @@
 /**
  * Server-side lead handling: formatting, email delivery (Resend) and the
- * optional CRM webhook. Imported only by src/pages/api/lead.ts.
+ * optional CRM webhook. Used by src/lib/lead-handler.ts.
  */
 import { site } from '@/site.config';
 import { inquiryPaths } from '@/data/nav';
 import { answerLabel, questionLabel } from '@/data/quote-flow';
 import type { LeadPayload, LeadScore } from './lead';
 
-/** Runtime env first (Netlify Functions), then build-time env (astro dev). */
+/**
+ * Server configuration. On Cloudflare Pages the values arrive per request
+ * in the function context, so the handler hands them over before use.
+ */
+let runtimeEnv: Record<string, unknown> = {};
+export function setRuntimeEnv(values: Record<string, unknown>) {
+  runtimeEnv = values || {};
+}
 export const env = (key: string): string => {
-  const fromProcess = typeof process !== 'undefined' ? process.env?.[key] : undefined;
-  return (fromProcess ?? (import.meta.env as Record<string, string | undefined>)[key] ?? '').trim();
+  const v = runtimeEnv[key];
+  return typeof v === 'string' ? v.trim() : '';
 };
 
 export interface LeadRecord {

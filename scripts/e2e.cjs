@@ -6,10 +6,12 @@
  *   - tracking events fire in order
  *   - the quick form works, and failure is reported honestly when delivery is off
  *
- * Start the dev server with the test env first:
- *   RESEND_API_KEY=test RESEND_API_URL=http://127.0.0.1:8787/emails \
- *   LEAD_FROM_EMAIL="Test <t@example.com>" LEAD_TO_EMAIL=owner@example.com \
- *   LEAD_WEBHOOK_URL=http://127.0.0.1:8787/hook npm run dev
+ * Build, then start the Cloudflare Pages runtime with test bindings:
+ *   npm run build
+ *   npm run pages:dev -- --binding PUBLIC_LAUNCH_READY=true \
+ *     --binding RESEND_API_KEY=test --binding RESEND_API_URL=http://127.0.0.1:8787/emails \
+ *     --binding "LEAD_FROM_EMAIL=Test <t@example.com>" --binding LEAD_TO_EMAIL=owner@example.com \
+ *     --binding LEAD_WEBHOOK_URL=http://127.0.0.1:8787/hook
  * then: npm run test:e2e
  */
 const { chromium } = require('playwright');

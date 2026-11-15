@@ -3,19 +3,22 @@
  * Validates a lead, scores it, then delivers it by email and optional
  * webhook. Responds ok only when at least one delivery actually succeeded,
  * so the site can never show a thank-you page for a lead nobody received.
+ *
+ * Platform-neutral: takes a standard Request and a bag of env values.
+ * The Cloudflare Pages Function in functions/api/lead.ts is a thin wrapper.
  */
-import type { APIRoute } from 'astro';
-import { scoreLead, validateLead } from '@/lib/lead';
-import { buildRecord, emailConfigured, env, sendEmail, sendWebhook, webhookConfigured } from '@/lib/lead-server';
-
-export const prerender = false;
+import { scoreLead, validateLead } from './lead';
+import { buildRecord, emailConfigured, sendEmail, sendWebhook, setRuntimeEnv, webhookConfigured } from './lead-server';
 
 const json = (status: number, body: Record<string, unknown>) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
 
 const MIN_ELAPSED_MS = { quick: 2500, wizard: 5000 };
 
-export const POST: APIRoute = async ({ request }) => {
+export async function handleLead(request: Request, env: Record<string, unknown>): Promise<Response> {
+  if (request.method !== 'POST') return json(405, { ok: false, error: 'POST only.' });
+  setRuntimeEnv(env);
+
   const length = Number(request.headers.get('content-length') || 0);
   if (length > 6.2 * 1024 * 1024) return json(413, { ok: false, code: 'too_large', error: 'Attachments are too large. Remove one and try again.' });
 
@@ -41,36 +44,20 @@ export const POST: APIRoute = async ({ request }) => {
 
   const useEmail = emailConfigured();
   const useWebhook = webhookConfigured();
-  const devSink = env('LEAD_DEV_SINK') === 'file' && import.meta.env.DEV;
-
-  if (!useEmail && !useWebhook && !devSink) {
+  if (!useEmail && !useWebhook) {
     console.error('[lead] No delivery channel configured. Set RESEND_API_KEY + LEAD_FROM_EMAIL + LEAD_TO_EMAIL, or LEAD_WEBHOOK_URL.');
-    return json(503, {
-      ok: false, code: 'not_configured',
-      error: 'Our online form is not connected yet, so this was not sent.',
-    });
+    return json(503, { ok: false, code: 'not_configured', error: 'Our online form is not connected yet, so this was not sent.' });
   }
 
   const results = await Promise.all([
     useEmail ? sendEmail(record, lead) : null,
     useWebhook ? sendWebhook(record) : null,
   ]);
-  const delivered = results.some((r) => r?.ok);
-
-  if (devSink) {
-    // Local development only: write the lead to disk so the flow can be tested without credentials.
-    const fs = await import('node:fs/promises');
-    await fs.mkdir('.leads', { recursive: true });
-    await fs.writeFile(`.leads/${record.id}.json`, JSON.stringify({ ...record, deliveries: results }, null, 2));
-  }
-
-  if (!delivered && !devSink) {
+  if (!results.some((r) => r?.ok)) {
     console.error('[lead] Delivery failed', record.id, results.map((r) => r?.detail));
     return json(502, { ok: false, code: 'delivery_failed', error: 'We could not deliver that just now.' });
   }
 
   console.log('[lead] delivered', record.id, record.path, record.tier, record.score, results.map((r) => r?.detail || 'off').join(' / '));
   return json(200, { ok: true, id: record.id, score: record.score, tier: record.tier });
-};
-
-export const GET: APIRoute = () => json(405, { ok: false, error: 'POST only.' });
+}

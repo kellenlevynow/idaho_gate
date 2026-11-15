@@ -2,7 +2,7 @@
 
 The site is built with **zero invented business facts**. Where a fact was not available, the site either omits it, hides the element until the value is set, or uses a clearly safe placeholder. This file lists every one.
 
-Until section 1 is done, leave `PUBLIC_LAUNCH_READY=false`. That keeps every page `noindex` and shows a small "preview build" line in the footer.
+Until section 1 is done, leave `PUBLIC_LAUNCH_READY` unset or `false`. That keeps the whole site behind the preview password, keeps every page `noindex` and shows a small "preview build" line in the footer.
 
 ## 1. Must have before launch
 
@@ -15,8 +15,8 @@ All of these live in **`src/site.config.ts`**.
 | Hours | Monday to Friday, 7am to 5pm | Confirm, set `hoursPlaceholder: false`. |
 | Response time | "one business day" | Confirm you can honor it. Shown on the quote and thank-you pages. |
 | Legal entity name | Idaho Gate Co. | Confirm the registered name for the footer and legal pages. |
-| Lead delivery | Not configured | Set `RESEND_API_KEY`, `LEAD_FROM_EMAIL`, `LEAD_TO_EMAIL` (and optionally `LEAD_WEBHOOK_URL`) in Netlify. Without them the quote form reports an honest failure. See README. |
-| Domain | idahogate.com | Point DNS at Netlify. |
+| Lead delivery | Not configured | Set `RESEND_API_KEY`, `LEAD_FROM_EMAIL`, `LEAD_TO_EMAIL` (and optionally `LEAD_WEBHOOK_URL`) as secrets on the Cloudflare Pages project. Without them the quote form reports an honest failure. See README. |
+| Domain | idahogate.com | Add it as a custom domain on the Cloudflare Pages project when you release. |
 
 ## 2. Trust facts (hidden until supplied)
 

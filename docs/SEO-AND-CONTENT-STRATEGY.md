@@ -75,7 +75,7 @@ Each also lists the offices a homeowner should call (city, county, highway distr
 - JSON-LD: `HomeAndConstructionBusiness` and `WebSite` sitewide. `Service` on service, industry and area pages. `FAQPage` wherever FAQs appear. `BreadcrumbList` on every interior page. `Article` on guides. `HowTo` on the approach page. `ImageObject` on concept studies.
 - `Review` and `AggregateRating` schema are intentionally absent. Add them only with real reviews.
 - XML sitemap generated at build. `robots.txt` generated from config.
-- **Preview safety:** until `PUBLIC_LAUNCH_READY=true`, every page is `noindex` and `robots.txt` disallows everything. A preview build cannot rank or be mistaken for the live site.
+- **Preview safety:** until `PUBLIC_LAUNCH_READY=true`, the whole site is behind a password, every page is `noindex` and `robots.txt` disallows everything. A preview build cannot rank or be mistaken for the live site.
 - Placeholder phone and email are kept out of structured data until real values are set.
 - Static HTML, self-hosted fonts, responsive AVIF and WebP images, three.js loaded only after first paint.
 - Descriptive alt text on every render and an accessible name on every drawing.
@@ -100,7 +100,7 @@ If the owner still controls `idahofortifiedgate.com`, point it at this site. `pu
 | `/iron-works` | `/fabrication/` |
 | `/fencing` | `/gates/` |
 
-Add the old domain as a domain alias in Netlify so these fire with a 301. Do not let the old domain lapse to a third party.
+Add the old domain to the Cloudflare Pages project so these fire with a 301. Do not let the old domain lapse to a third party.
 
 ## 7. Off-site essentials
 

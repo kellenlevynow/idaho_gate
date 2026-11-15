@@ -13,8 +13,9 @@ Every image on the site is generated from the site's own code. There are no phot
 | Content | Markdown content collections | Add a page by adding a file |
 | 3D | three.js, loaded lazily | Real geometry for the homepage theater and the gate studio |
 | Drawings | SVG generated at build time | Elevations, plans and fabrication drawings with no client script |
-| Forms | One serverless route, `/api/lead` | Email through Resend, optional webhook |
-| Hosting | Netlify | Static files on the CDN, one function |
+| Forms | One Cloudflare Pages Function, `/api/lead` | Email through Resend, optional webhook |
+| Hosting | Cloudflare Pages | Static files on the CDN, two small functions |
+| Preview protection | Pages middleware, `functions/_middleware.ts` | The whole site sits behind a password until launch |
 
 ## Quick start
 
@@ -26,13 +27,19 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:4321. The quote form will report "not connected" until lead delivery is configured (below), which is the intended behavior.
+Open http://localhost:4321. `astro dev` serves the pages only. The forms post to a Cloudflare Pages Function, so to exercise them locally build the site and run it under the Pages runtime:
 
 ```bash
 npm run build
 ```
 
-Output goes to `dist/`.
+```bash
+npm run pages:dev -- --binding PUBLIC_LAUNCH_READY=true
+```
+
+Without lead delivery configured the quote form reports "not connected", which is the intended behavior.
+
+Output from `npm run build` goes to `dist/`.
 
 ### Other commands
 
@@ -40,26 +47,58 @@ Output goes to `dist/`.
 |---|---|
 | `npm run check` | TypeScript and Astro diagnostics |
 | `npm run check:content` | Title and description length, dash and placeholder lint |
-| `npm run test:e2e` | End-to-end conversion test (needs the dev server running with test env, see the top of `scripts/e2e.cjs`) |
+| `npm run test:e2e` | End-to-end conversion test (needs the Pages dev server running with test bindings, see the top of `scripts/e2e.cjs`) |
+| `npm run test:gate` | Checks the preview password gate against a local or live deployment |
+| `npm run pages:dev` | Serve `dist/` with the Cloudflare Pages runtime, functions included |
+| `npm run deploy` | Build and upload to the Cloudflare Pages project |
 | `npm run audit` | Static audit of `dist/`: one h1, titles, descriptions, canonicals, JSON-LD, alt text and every internal link |
 | `npm run test:a11y` | Browser checks against a served build: phone overflow, thumb-reach CTAs, keyboard use, reduced motion, no JavaScript |
 | `npm run render:stills` | Re-render the homepage theater fallback stills from the live 3D scene |
 | `npm run render:presets` | Re-render every concept gate image from the studio scene |
 
-The two render commands need the dev server running and Playwright with Chromium installed. `npm run test:a11y` expects the build served at http://127.0.0.1:4400, for example with `npx serve dist -l 4400`.
+The two render commands need the dev server running and Playwright with Chromium installed. `npm run test:a11y` expects the build served without the password gate at http://127.0.0.1:4400, for example with `npx serve dist -l 4400`.
 
 Astro 7 runs the dev server as a background process. Stop it with `npx astro dev stop`.
 
-## Before launch
+## Private preview and public release
+
+The site is deployed behind a password. `functions/_middleware.ts` runs before every request, including images, scripts, the sitemap and the lead API.
+
+| Setting | Where | Effect |
+|---|---|---|
+| `SITE_PASSWORD` | Cloudflare Pages secret | The password visitors type on the preview screen |
+| `PUBLIC_LAUNCH_READY` | Cloudflare Pages variable, and set at build time | `true` opens the site to the public |
+
+Behavior while `PUBLIC_LAUNCH_READY` is not `true`:
+
+- Every request needs the password. A signed-in browser keeps a cookie for 30 days. Visit `/__preview?logout` to sign out.
+- Every response carries `X-Robots-Tag: noindex`, every page has a `noindex` meta tag and `robots.txt` disallows everything.
+- If `SITE_PASSWORD` is missing the site returns 503 instead of opening. It fails closed.
+
+To change the password:
+
+```bash
+npx wrangler pages secret put SITE_PASSWORD --project-name idaho-gate
+```
+
+Then redeploy so the new value takes effect.
+
+### Releasing to the public
 
 1. Fill in the real phone, email and hours in **`src/site.config.ts`**. See `TODO-CONTENT.md` for the full list.
-2. Configure lead delivery (next section).
-3. Set `PUBLIC_LAUNCH_READY=true` in Netlify. Until then every page is `noindex`, `robots.txt` blocks crawlers and the footer shows a preview note.
-4. Run `npm run test:e2e` once against a deploy preview and send yourself a real quote request.
+2. Configure lead delivery (next section) and send yourself a real quote request from the preview.
+3. In the Cloudflare dashboard, open the Pages project, go to Settings, Variables and Secrets, and add `PUBLIC_LAUNCH_READY` = `true` for Production.
+4. Deploy with the same flag so the pages drop their `noindex` tags and functions run only on `/api/*`:
+
+```bash
+PUBLIC_LAUNCH_READY=true npm run deploy
+```
+
+5. Add `idahogate.com` as a custom domain on the Pages project.
 
 ## Lead delivery
 
-Set these in Netlify under Site configuration, Environment variables. Never commit them.
+Set these as secrets on the Cloudflare Pages project (Settings, Variables and Secrets, or `npx wrangler pages secret put NAME --project-name idaho-gate`). Never commit them.
 
 | Variable | Required | Purpose |
 |---|---|---|
@@ -78,7 +117,7 @@ How it behaves:
 - Spam protection is a honeypot field plus a minimum time-to-submit. No CAPTCHA.
 - The email's reply-to is the customer, so you can answer straight from your inbox.
 
-For local testing without credentials, run the dev server with `LEAD_DEV_SINK=file`. Leads are written to `.leads/`. This only works in development.
+For local testing, pass values to the Pages runtime with `--binding NAME=value` or a `.dev.vars` file (ignored by git). `scripts/e2e.cjs` shows a full example with a mock mail API and webhook.
 
 ## Tracking
 
@@ -96,15 +135,21 @@ Events: `call_click`, `email_click`, `cta_click`, `quote_start`, `quote_step_n`,
 
 Attribution (`src/scripts/attribution.ts`) stores first-touch and last-touch UTM parameters, `gclid`, `fbclid`, `msclkid`, landing page, referrer and the last service page viewed, and sends them with every lead.
 
-## Deploying to Netlify
+## Deploying to Cloudflare Pages
 
-1. Push this repository to GitHub.
-2. In Netlify, add a new site from the repository. Build settings are read from `netlify.toml`.
-3. Add the environment variables above.
-4. Add `idahogate.com` as the primary domain.
-5. If you still control `idahofortifiedgate.com`, add it as a domain alias. `public/_redirects` maps its old paths to the new pages with 301s.
+The project is deployed by direct upload: the site is built here and `wrangler` uploads `dist/` together with the `functions/` folder.
 
-To host elsewhere, swap the adapter in `astro.config.mjs` (`@astrojs/vercel`, `@astrojs/cloudflare` or `@astrojs/node`). The lead route uses only standard `Request` and `fetch`.
+```bash
+npm run deploy
+```
+
+That needs a Cloudflare API token with the Pages edit permission in `CLOUDFLARE_API_TOKEN`, and the account in `CLOUDFLARE_ACCOUNT_ID` if the token can see more than one.
+
+`PUBLIC_*` variables are read at build time, so set them in the shell that runs the build. Everything else is read at request time from the Pages project.
+
+To build on Cloudflare instead, connect the GitHub repository to the Pages project in the dashboard with build command `npm run build` and output directory `dist`, and set `PUBLIC_*` values as build variables.
+
+`public/_headers` sets caching and security headers. `public/_redirects` maps the old Squarespace paths from `idahofortifiedgate.com` to the new pages. If you still control that domain, add it to the Pages project so those 301s carry over its search equity.
 
 ## Project layout
 
@@ -127,6 +172,7 @@ src/
     drawing.ts            Elevation and plan drawing generator
     fab-drawings.ts       Fabrication concept drawings
     lead.ts               Lead validation and scoring (shared by browser and server)
+    lead-handler.ts       The /api/lead request handler
     lead-server.ts        Email and webhook delivery
     schema.ts             JSON-LD builders
   three/
@@ -137,6 +183,9 @@ src/
   components/             Shared UI
   layouts/                Base and Legal layouts
   pages/                  Routes
+functions/
+  _middleware.ts          Preview password gate (runs before every request)
+  api/lead.ts             Lead endpoint wrapper
 docs/
   BUSINESS-LINE-STRATEGY.md
   SEO-AND-CONTENT-STRATEGY.md

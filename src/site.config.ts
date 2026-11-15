@@ -6,7 +6,8 @@
  * Replace it, then set PUBLIC_LAUNCH_READY=true. See TODO-CONTENT.md.
  */
 
-const env = import.meta.env;
+// Also imported by the Cloudflare Pages Function, where import.meta.env does not exist.
+const env: Record<string, string | undefined> = (import.meta as { env?: Record<string, string | undefined> }).env ?? {};
 
 export const site = {
   name: 'Idaho Gate Co.',
