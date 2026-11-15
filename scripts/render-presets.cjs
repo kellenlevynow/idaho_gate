@@ -34,8 +34,6 @@ const shots = {
 const extras = [
   { name: 'estate-ridgeline-exploded', preset: 'estate-ridgeline', finish: 'matte-black', yaw: 32, pitch: 14, zoom: 0.72, exploded: true },
   { name: 'estate-ridgeline-line', preset: 'estate-ridgeline', finish: 'matte-black', yaw: -24, pitch: 8, zoom: 1, drawing: true },
-  { name: 'estate-ridgeline-open', preset: 'estate-ridgeline', finish: 'matte-black', yaw: -24, pitch: 8, zoom: 1, open: true },
-  { name: 'slide-slat-open', preset: 'slide-slat', finish: 'weathering', yaw: -20, pitch: 10, zoom: 1, open: true },
   ...['matte-black', 'dark-bronze', 'weathering', 'galvanized', 'graphite'].map((f) => ({
     name: `finish-${f}`, preset: 'estate-ridgeline', finish: f, yaw: -32, pitch: 4, zoom: 3.4, w: 1200, h: 900,
   })),

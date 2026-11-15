@@ -41,10 +41,14 @@ Output goes to `dist/`.
 | `npm run check` | TypeScript and Astro diagnostics |
 | `npm run check:content` | Title and description length, dash and placeholder lint |
 | `npm run test:e2e` | End-to-end conversion test (needs the dev server running with test env, see the top of `scripts/e2e.cjs`) |
+| `npm run audit` | Static audit of `dist/`: one h1, titles, descriptions, canonicals, JSON-LD, alt text and every internal link |
+| `npm run test:a11y` | Browser checks against a served build: phone overflow, thumb-reach CTAs, keyboard use, reduced motion, no JavaScript |
 | `npm run render:stills` | Re-render the homepage theater fallback stills from the live 3D scene |
 | `npm run render:presets` | Re-render every concept gate image from the studio scene |
 
-The two render commands need the dev server running and Playwright with Chromium installed.
+The two render commands need the dev server running and Playwright with Chromium installed. `npm run test:a11y` expects the build served at http://127.0.0.1:4400, for example with `npx serve dist -l 4400`.
+
+Astro 7 runs the dev server as a background process. Stop it with `npx astro dev stop`.
 
 ## Before launch
 

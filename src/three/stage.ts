@@ -67,19 +67,23 @@ function noiseTexture(kind: 'plain' | 'patina' | 'spangle') {
     let s = kind === 'patina' ? 11 : 29;
     const rand = () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
     if (kind === 'patina') {
-      // mottled oxide: soft dark blooms and a few bright streaks
-      for (let i = 0; i < 900; i++) {
-        const x = rand() * size, y = rand() * size, r = 4 + rand() * 26;
+      // mottled oxide: many small soft blooms, fine grain and faint vertical run marks
+      for (let i = 0; i < 2600; i++) {
+        const x = rand() * size, y = rand() * size, r = 1.5 + rand() * 8;
         const g = ctx.createRadialGradient(x, y, 0, x, y, r);
-        const dark = rand() > 0.35;
-        g.addColorStop(0, dark ? `rgba(70,32,14,${0.06 + rand() * 0.14})` : `rgba(255,190,130,${0.03 + rand() * 0.07})`);
+        const dark = rand() > 0.4;
+        g.addColorStop(0, dark ? `rgba(72,34,16,${0.05 + rand() * 0.11})` : `rgba(255,196,140,${0.03 + rand() * 0.06})`);
         g.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = g;
         ctx.fillRect(x - r, y - r, r * 2, r * 2);
       }
-      for (let i = 0; i < 60; i++) {
-        ctx.fillStyle = `rgba(50,22,10,${0.05 + rand() * 0.1})`;
-        ctx.fillRect(rand() * size, rand() * size, 1 + rand() * 2, 20 + rand() * 90);
+      for (let i = 0; i < 5000; i++) {
+        ctx.fillStyle = rand() > 0.5 ? 'rgba(60,28,12,0.07)' : 'rgba(255,210,170,0.05)';
+        ctx.fillRect(rand() * size, rand() * size, 1, 1);
+      }
+      for (let i = 0; i < 40; i++) {
+        ctx.fillStyle = `rgba(52,24,10,${0.03 + rand() * 0.05})`;
+        ctx.fillRect(rand() * size, rand() * size, 1 + rand() * 1.5, 30 + rand() * 110);
       }
     } else {
       // zinc spangle: angular crystalline patches

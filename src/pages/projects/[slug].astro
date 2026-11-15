@@ -29,7 +29,7 @@ const schema = [
   imageSchema({ name: `${d.title} (concept)`, description: d.description, path, contentUrl: '/og/default.jpg' }),
 ];
 ---
-<Base title={d.seoTitle} description={d.description} schema={schema} service={`concept/${entry.id}`} cta={{ path: isGate ? 'gates' : 'fabrication', context: `concept_${entry.id}`, heading: 'Start from this design.<br />Make it yours.' }}>
+<Base title={d.seoTitle} description={d.description} schema={schema} service={`concept/${entry.id}`} cta={{ path: isGate ? 'gates' : 'fabrication', context: `concept_${entry.id}`, heading: 'Start from this design. <br />Make it yours.' }}>
   <section class="surface-black" data-track-location="concept_hero">
     <div class="wrap py-10 lg:py-14">
       <Breadcrumbs crumbs={crumbs} />

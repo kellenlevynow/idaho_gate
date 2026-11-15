@@ -11,7 +11,9 @@
     "render:stills": "node scripts/render-stills.cjs",
     "render:presets": "node scripts/render-presets.cjs",
     "test:e2e": "node scripts/e2e.cjs",
-    "check:content": "node scripts/check-content.cjs"
+    "check:content": "node scripts/check-content.cjs",
+    "audit": "node scripts/audit-dist.cjs",
+    "test:a11y": "node scripts/a11y-check.cjs"
   },
   "dependencies": {
     "@astrojs/netlify": "^8.2.14",

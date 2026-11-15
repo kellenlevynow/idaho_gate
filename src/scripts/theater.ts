@@ -66,16 +66,32 @@ if (root && live) {
 
   const boot = async () => {
     try {
+      const params = new URLSearchParams(location.search);
+      const force = params.has('capture') || params.has('force3d');
       const probe = document.createElement('canvas');
-      if (!(probe.getContext('webgl2') || probe.getContext('webgl'))) return;
+      const gl = (probe.getContext('webgl2') || probe.getContext('webgl')) as WebGLRenderingContext | null;
+      if (!gl) return;
+      // Software WebGL (no GPU acceleration) cannot hold frame rate on this scene.
+      // Those devices keep the scroll-driven stills instead.
+      const info = gl.getExtension('WEBGL_debug_renderer_info');
+      const gpu = info ? String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL)) : '';
+      if (!force && /swiftshader|llvmpipe|softpipe|software|basic render/i.test(gpu)) return;
       const conn = (navigator as any).connection;
-      if (conn?.saveData) return;
+      if (!force && conn?.saveData) return;
       const { initHero } = await import('@/three/hero');
       handle = initHero({
         canvas, overlay,
-        preserve: new URLSearchParams(location.search).has('capture'),
+        preserve: params.has('capture'),
         onFinish: setFinish,
         onReady: () => root.classList.add('is-3d'),
+        onTooSlow: () => {
+          if (force) return;
+          // Even at the lowest resolution the device is struggling: hand back to the stills.
+          root.classList.remove('is-3d');
+          handle?.dispose();
+          handle = null;
+          overlay.replaceChildren();
+        },
       });
       handle.setProgress(progress(), true);
       window.__gate = handle;

@@ -3,7 +3,7 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
 (async () => {
-  const [outDir, w, h, ps, url = 'http://127.0.0.1:4321/'] = process.argv.slice(2);
+  const [outDir, w, h, ps, url = 'http://127.0.0.1:4321/?force3d=1'] = process.argv.slice(2);
   fs.mkdirSync(outDir, { recursive: true });
   const browser = await chromium.launch({ args: ['--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
   const page = await browser.newPage({ viewport: { width: +w, height: +h }, deviceScaleFactor: 1, isMobile: +w < 700, hasTouch: +w < 700 });

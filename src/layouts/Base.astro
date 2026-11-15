@@ -30,7 +30,9 @@ const {
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, site.url).toString();
-const fullTitle = title.includes(site.name) ? title : `${title} | ${site.name}`;
+// Keep the full title under 60 characters: add the brand only when it fits.
+const withBrand = `${title} | ${site.name}`;
+const fullTitle = title.includes(site.name) || withBrand.length > 60 ? title : withBrand;
 const robots = noindex || !site.launchReady ? 'noindex, nofollow' : 'index, follow, max-image-preview:large';
 const og = new URL(ogImage, site.url).toString();
 const jsonLd = [businessSchema(), websiteSchema(), ...schema];

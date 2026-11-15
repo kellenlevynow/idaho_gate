@@ -26,7 +26,7 @@ const schema = [
   ...(d.faqs.length ? [faqSchema(d.faqs)] : []),
 ];
 ---
-<Base title={d.seoTitle} description={d.description} schema={schema} service={`area/${entry.id}`} cta={{ context: `area_${entry.id}`, heading: `Planning a gate in<br />${place}?` }}>
+<Base title={d.seoTitle} description={d.description} schema={schema} service={`area/${entry.id}`} cta={{ context: `area_${entry.id}`, heading: `Planning a gate in <br />${place}?` }}>
   <section class="surface-dark grid-dark" data-track-location="area_hero">
     <div class="wrap grid items-center gap-10 py-10 lg:grid-cols-12 lg:gap-12 lg:py-16">
       <div class="lg:col-span-7">

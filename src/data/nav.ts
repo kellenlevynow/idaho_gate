@@ -38,7 +38,7 @@ export const divisions: Division[] = [
     summary:
       'Driveway, estate, ranch and commercial gates designed around your opening, your grade and your winters, then fabricated and installed by the same crew.',
     seoTitle: 'Custom gates in North Idaho',
-    description: 'Custom driveway, estate, sliding, ranch and commercial gates designed, fabricated and installed by Idaho Gate Co. across North Idaho and the Inland Northwest.',
+    description: 'Custom driveway, estate, sliding, ranch and commercial gates designed, fabricated and installed by Idaho Gate Co. across North Idaho.',
     heading: 'Custom gates, drawn for your opening and built in our shop.',
     intro: [
       'Every gate we build starts with a site visit and a drawing. Width, grade, swing room, snow and wind decide the type. Your home and your taste decide the look.',

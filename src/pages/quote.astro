@@ -155,9 +155,8 @@ const towns = serviceTowns.map((t) => ({ label: `${t.name}, ${t.state}`, tier: t
       <aside class="lg:col-span-4">
         <div class="sheet bg-white p-6 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]">
           <p class="tech text-steel-500">Your request</p>
-          <dl class="summary mt-4" data-summary>
-            <div class="text-sm text-steel-500" data-summary-empty>Your answers appear here as you go.</div>
-          </dl>
+          <p class="mt-4 text-sm text-steel-500" data-summary-empty>Your answers appear here as you go.</p>
+          <dl class="summary mt-4" data-summary hidden></dl>
           <div class="mt-6 border-t border-ink-900/10 pt-5">
             <p class="h4">Rather talk it through?</p>
             <a href={`tel:${site.contact.phoneTel}`} class="mt-2 inline-flex items-center gap-2 text-[1.3rem] font-[700] text-ember-600 no-underline [font-stretch:110%] tabular-nums"><Icon name="phone" size={18} /> {site.contact.phoneDisplay}</a>

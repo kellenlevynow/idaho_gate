@@ -22,7 +22,7 @@ const schema = [breadcrumbSchema(crumbs), articleSchema({ title: d.title, descri
 const updated = new Date(`${d.updated}T12:00:00Z`).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 const isFab = d.category === 'Fabrication';
 ---
-<Base title={d.seoTitle} description={d.description} schema={schema} service={`guide/${entry.id}`} cta={{ path: isFab ? 'fabrication' : 'gates', context: `guide_${entry.id}`, heading: 'Ready to put this<br />to use?' }}>
+<Base title={d.seoTitle} description={d.description} schema={schema} service={`guide/${entry.id}`} cta={{ path: isFab ? 'fabrication' : 'gates', context: `guide_${entry.id}`, heading: 'Ready to put this <br />to use?' }}>
   <section class="surface-bone on-light" data-track-location="guide_hero">
     <div class="wrap grid gap-10 py-10 lg:grid-cols-12 lg:gap-14 lg:py-16">
       <div class="lg:col-span-7">

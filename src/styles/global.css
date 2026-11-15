@@ -152,6 +152,11 @@
   summary {
     cursor: pointer;
   }
+  /* Grid items default to min-width:auto, which lets a wide table or a row of
+     buttons push the whole page sideways on phones. Let them shrink instead. */
+  .grid > * {
+    min-width: 0;
+  }
   summary::-webkit-details-marker {
     display: none;
   }
@@ -316,6 +321,13 @@
       border-color 0.2s,
       transform 0.2s var(--ease-out-expo);
     white-space: nowrap;
+  }
+  @media (max-width: 30rem) {
+    .btn {
+      max-width: 100%;
+      white-space: normal;
+      text-align: center;
+    }
   }
   .btn:hover {
     --btn-bg: var(--color-ember-700);

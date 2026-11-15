@@ -60,7 +60,7 @@ const others = enabledDivisions.filter((d) => d.slug !== division.slug);
               <li>
                 <a href={servicePath(s)} class="group block no-underline">
                   {s.data.visual && (
-                    <div class="sheet overflow-hidden bg-white transition-shadow group-hover:shadow-[0_18px_40px_-20px_rgb(19_20_21/0.5)]">
+                    <div class="sheet grid aspect-[3/2] place-items-center overflow-hidden bg-white p-2 transition-shadow group-hover:shadow-[0_18px_40px_-20px_rgb(19_20_21/0.5)]">
                       <Drawing kind={s.data.visual.kind} preset={s.data.visual.preset} view={s.data.visual.view === 'plan' ? 'plan' : 'elevation'} theme="light" dims={false} titleBlock={false} footings={false} decorative />
                     </div>
                   )}

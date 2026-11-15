@@ -83,6 +83,8 @@ export interface HeroOptions {
   onStage?(index: number): void;
   onFinish?(name: string): void;
   onReady?(): void;
+  /** called when the device cannot hold frame rate even at the lowest quality */
+  onTooSlow?(): void;
   preserve?: boolean;
 }
 
@@ -636,6 +638,9 @@ export function initHero(opts: HeroOptions): HeroHandle {
         quality *= 0.8;
         slowFrames = 0;
         resize();
+      } else if (slowFrames > 40 && quality <= 0.55) {
+        slowFrames = 0;
+        opts.onTooSlow?.();
       }
     }
   };

@@ -5,15 +5,16 @@
  * the work, so it is keyboard and touch accessible with no library.
  */
 import { Picture } from 'astro:assets';
-interface Props { before: string; after: string; beforeLabel: string; afterLabel: string; alt: string; class?: string }
-const { before, after, beforeLabel, afterLabel, alt, class: cls = '' } = Astro.props;
+interface Props { before: string; after: string; beforeLabel: string; afterLabel: string; alt: string; class?: string; eager?: boolean }
+const { before, after, beforeLabel, afterLabel, alt, class: cls = '', eager = false } = Astro.props;
+const load = eager ? 'eager' : 'lazy';
 const files = import.meta.glob<{ default: ImageMetadata }>('@/assets/renders/presets/*.jpg', { eager: true });
 const pick = (n: string) => Object.entries(files).find(([p]) => p.endsWith(`/${n}.jpg`))![1].default;
 ---
 <div class:list={['compare sheet sheet-dark', cls]} data-compare style="--pos:50%">
-  <Picture src={pick(after)} alt={alt} formats={['avif', 'webp']} widths={[640, 960, 1600]} sizes="(min-width:1024px) 60vw, 100vw" class="compare-img" />
+  <Picture src={pick(after)} alt={alt} formats={['avif', 'webp']} widths={[640, 960, 1600]} sizes="(min-width:1024px) 60vw, 100vw" class="compare-img" loading={load} fetchpriority={eager ? 'high' : 'auto'} />
   <div class="compare-top" aria-hidden="true">
-    <Picture src={pick(before)} alt="" formats={['avif', 'webp']} widths={[640, 960, 1600]} sizes="(min-width:1024px) 60vw, 100vw" class="compare-img" />
+    <Picture src={pick(before)} alt="" formats={['avif', 'webp']} widths={[640, 960, 1600]} sizes="(min-width:1024px) 60vw, 100vw" class="compare-img" loading={load} />
   </div>
   <span class="compare-label left tech">{beforeLabel}</span>
   <span class="compare-label right tech">{afterLabel}</span>

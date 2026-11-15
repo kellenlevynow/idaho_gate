@@ -21,6 +21,7 @@ if (root) {
   const submitError = root.querySelector<HTMLElement>('[data-submit-error]')!;
   const submitErrorText = root.querySelector<HTMLElement>('[data-submit-error-text]')!;
   const summary = document.querySelector<HTMLElement>('[data-summary]')!;
+  const summaryEmpty = document.querySelector<HTMLElement>('[data-summary-empty]');
   const pathStep = root.querySelector<HTMLElement>('[data-step="path"]')!;
   const contactStep = root.querySelector<HTMLElement>('[data-step="contact"]')!;
   const query = new URLSearchParams(location.search);
@@ -82,9 +83,9 @@ if (root) {
       if (files.length) rows.push(['Attachments', `${files.length} file${files.length > 1 ? 's' : ''}`]);
     }
     if (studio) rows.push(['Studio design', studio]);
-    summary.innerHTML = rows.length
-      ? rows.map(([k, v]) => `<div class="row"><dt>${k}</dt><dd>${v.replace(/</g, '&lt;')}</dd></div>`).join('')
-      : '<div class="text-sm text-steel-500">Your answers appear here as you go.</div>';
+    summary.innerHTML = rows.map(([k, v]) => `<div class="row"><dt>${k}</dt><dd>${v.replace(/</g, '&lt;')}</dd></div>`).join('');
+    summary.hidden = rows.length === 0;
+    if (summaryEmpty) summaryEmpty.hidden = rows.length > 0;
   };
 
   const save = () => {
@@ -215,7 +216,8 @@ if (root) {
 
   // Enter moves forward instead of submitting early.
   form.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && (e.target as HTMLElement).tagName !== 'TEXTAREA' && current() !== contactStep) {
+    // Only for inputs: buttons (Back, Continue) keep their normal Enter behavior.
+    if (e.key === 'Enter' && (e.target as HTMLElement).tagName === 'INPUT' && current() !== contactStep) {
       e.preventDefault();
       if (index > 0) go(1);
     }

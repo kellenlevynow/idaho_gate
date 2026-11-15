@@ -35,7 +35,7 @@ const stages = [
       <article class:list={['stage', `stage-${s.key}`]} data-stage={i} data-stage-key={s.key}>
         <div class="stage-still" aria-hidden={i === 0 ? undefined : 'true'}>
           {img(land, s.key) && img(port, s.key) && (
-            <picture>
+            <div class="still-wrap">
               <Picture
                 src={img(land, s.key)!}
                 alt={s.alt}
@@ -43,7 +43,7 @@ const stages = [
                 widths={[640, 960, 1280, 1920]}
                 sizes="100vw"
                 loading={i === 0 ? 'eager' : 'lazy'}
-                fetchpriority={i === 0 ? 'high' : 'auto'}
+                fetchpriority={i === 0 ? 'high' : 'low'}
                 class="still still-land"
               />
               <Picture
@@ -53,10 +53,10 @@ const stages = [
                 widths={[480, 720, 1080]}
                 sizes="100vw"
                 loading={i === 0 ? 'eager' : 'lazy'}
-                fetchpriority={i === 0 ? 'high' : 'auto'}
+                fetchpriority={i === 0 ? 'high' : 'low'}
                 class="still still-port"
               />
-            </picture>
+            </div>
           )}
         </div>
 
@@ -65,7 +65,7 @@ const stages = [
             <div class="hero-copy">
               <div class="hero-top">
                 <p class="eyebrow text-stone-200"><span class="sm:hidden">North Idaho · Custom gates</span><span class="hidden sm:inline">Custom gates · Automation · Fabrication</span></p>
-                <h1 class="display hero-h1 mt-5 text-bone">Built to<br />make an<br /><span class="serif-accent text-ember-400">entrance.</span></h1>
+                <h1 class="display hero-h1 mt-5 text-bone">Built to <br />make an <br /><span class="serif-accent text-ember-400">entrance.</span></h1>
               </div>
               <div class="hero-bottom">
                 <p class="lede hero-lede max-w-[27rem] text-stone-200">Idaho Gate Co. designs, engineers and fabricates custom driveway gates and architectural metalwork for properties across North Idaho and the Inland Northwest.</p>
@@ -126,7 +126,12 @@ const stages = [
   .stage { position: relative; display: grid; min-height: 100svh; align-items: end; overflow: hidden; }
   .stage + .stage { min-height: 82svh; border-top: 1px solid rgb(255 255 255 / 0.1); }
   .stage-still { position: absolute; inset: 0; }
-  .stage-still picture, .stage-still img { width: 100%; height: 100%; object-fit: cover; }
+  .stage-still .still-wrap, .stage-still picture, .stage-still img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .stage-still picture:has(.still-port) { display: none; }
+  @media (max-aspect-ratio: 1/1) {
+    .stage-still picture:has(.still-land) { display: none; }
+    .stage-still picture:has(.still-port) { display: block; }
+  }
   .stage-still::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgb(13 13 14 / 0.86) 0%, rgb(13 13 14 / 0.25) 55%, rgb(13 13 14 / 0.35) 100%); }
   .still-port { display: none; }
   @media (max-aspect-ratio: 1/1) {

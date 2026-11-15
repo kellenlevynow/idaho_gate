@@ -8,7 +8,9 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://idahogate.com',
   output: 'static',
-  adapter: netlify(),
+  // Images are processed at build time (AVIF/WebP via sharp), not by a runtime image CDN,
+  // so the static output is complete on any host.
+  adapter: netlify({ imageCDN: false }),
   integrations: [
     sitemap({
       filter: (page) => !/\/(thank-you|404|api)\/?$/.test(page) && !page.includes('/thank-you'),
@@ -17,7 +19,7 @@ export default defineConfig({
   build: { format: 'directory', inlineStylesheets: 'auto' },
   vite: {
     plugins: [tailwindcss()],
-    build: { chunkSizeWarningLimit: 900 },
+    build: { chunkSizeWarningLimit: 900, sourcemap: true },
   },
   devToolbar: { enabled: false },
 });

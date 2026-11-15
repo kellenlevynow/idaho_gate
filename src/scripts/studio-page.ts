@@ -82,7 +82,7 @@ if (root) {
       t.setAttribute('aria-selected', String(on));
     });
     root.querySelectorAll<HTMLElement>('[data-panel]').forEach((p) => (p.hidden = p.dataset.panel !== v));
-    tools.style.visibility = v === '3d' ? 'visible' : 'hidden';
+    tools.hidden = v !== '3d';
     apply();
   };
   tabs.forEach((t, i) => {
@@ -97,18 +97,38 @@ if (root) {
 
   apply();
 
+  const start3d = async () => {
+    const { initStudio } = await import('@/three/studio');
+    const { spec, finish } = read();
+    const state: StudioState = { spec, finish, ...toggles };
+    handle = initStudio(canvas, state, {
+      preserve: new URLSearchParams(location.search).has('capture'),
+      onReady: () => (fallback.hidden = true),
+    });
+    (window as any).__studio = handle;
+  };
+
   (async () => {
     try {
+      const params = new URLSearchParams(location.search);
       const probe = document.createElement('canvas');
-      if (!(probe.getContext('webgl2') || probe.getContext('webgl'))) throw new Error('no webgl');
-      const { initStudio } = await import('@/three/studio');
-      const { spec, finish } = read();
-      const state: StudioState = { spec, finish, ...toggles };
-      handle = initStudio(canvas, state, {
-        preserve: new URLSearchParams(location.search).has('capture'),
-        onReady: () => (fallback.hidden = true),
-      });
-      (window as any).__studio = handle;
+      const gl = (probe.getContext('webgl2') || probe.getContext('webgl')) as WebGLRenderingContext | null;
+      if (!gl) throw new Error('no webgl');
+      const info = gl.getExtension('WEBGL_debug_renderer_info');
+      const gpu = info ? String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL)) : '';
+      const software = /swiftshader|llvmpipe|softpipe|software|basic render/i.test(gpu);
+      if (software && !params.has('capture') && !params.has('force3d')) {
+        // No GPU acceleration: start on the drawing and let the visitor opt in to 3D.
+        loading.innerHTML = '3D runs slowly without graphics acceleration. <button type="button" class="underline" data-load-3d>Load the 3D model anyway</button>';
+        loading.querySelector('[data-load-3d]')!.addEventListener('click', async () => {
+          loading.textContent = 'Loading 3D model';
+          await start3d();
+          select('3d');
+        });
+        select('elev');
+        return;
+      }
+      await start3d();
     } catch {
       // No WebGL: the drawings still work, so switch to the elevation view.
       loading.textContent = '3D is not available on this device. Showing the elevation drawing instead.';
