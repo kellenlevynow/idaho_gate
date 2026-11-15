@@ -7,7 +7,6 @@
     "dev": "astro dev",
     "build": "astro build && node scripts/write-routes.cjs",
     "pages:dev": "wrangler pages dev dist --compatibility-date=2026-10-01 --port 4321",
-    "deploy": "npm run build && wrangler pages deploy dist --project-name idaho-gate --branch main",
     "preview": "astro preview",
     "check": "astro check",
     "render:stills": "node scripts/render-stills.cjs",

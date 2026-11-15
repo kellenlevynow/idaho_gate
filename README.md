@@ -50,7 +50,6 @@ Output from `npm run build` goes to `dist/`.
 | `npm run test:e2e` | End-to-end conversion test (needs the Pages dev server running with test bindings, see the top of `scripts/e2e.cjs`) |
 | `npm run test:gate` | Checks the preview password gate against a local or live deployment |
 | `npm run pages:dev` | Serve `dist/` with the Cloudflare Pages runtime, functions included |
-| `npm run deploy` | Build and upload to the Cloudflare Pages project |
 | `npm run audit` | Static audit of `dist/`: one h1, titles, descriptions, canonicals, JSON-LD, alt text and every internal link |
 | `npm run test:a11y` | Browser checks against a served build: phone overflow, thumb-reach CTAs, keyboard use, reduced motion, no JavaScript |
 | `npm run render:stills` | Re-render the homepage theater fallback stills from the live 3D scene |
@@ -67,7 +66,7 @@ The site is deployed behind a password. `functions/_middleware.ts` runs before e
 | Setting | Where | Effect |
 |---|---|---|
 | `SITE_PASSWORD` | Cloudflare Pages secret | The password visitors type on the preview screen |
-| `PUBLIC_LAUNCH_READY` | Cloudflare Pages variable, and set at build time | `true` opens the site to the public |
+| `PUBLIC_LAUNCH_READY` | Cloudflare Pages variable | `true` opens the site to the public |
 
 Behavior while `PUBLIC_LAUNCH_READY` is not `true`:
 
@@ -75,30 +74,21 @@ Behavior while `PUBLIC_LAUNCH_READY` is not `true`:
 - Every response carries `X-Robots-Tag: noindex`, every page has a `noindex` meta tag and `robots.txt` disallows everything.
 - If `SITE_PASSWORD` is missing the site returns 503 instead of opening. It fails closed.
 
-To change the password:
-
-```bash
-npx wrangler pages secret put SITE_PASSWORD --project-name idaho-gate
-```
-
-Then redeploy so the new value takes effect.
+To change the password, edit the `SITE_PASSWORD` secret on the Pages project (Settings, Variables and Secrets), then retry the latest deployment so the new value takes effect.
 
 ### Releasing to the public
 
 1. Fill in the real phone, email and hours in **`src/site.config.ts`**. See `TODO-CONTENT.md` for the full list.
 2. Configure lead delivery (next section) and send yourself a real quote request from the preview.
-3. In the Cloudflare dashboard, open the Pages project, go to Settings, Variables and Secrets, and add `PUBLIC_LAUNCH_READY` = `true` for Production.
-4. Deploy with the same flag so the pages drop their `noindex` tags and functions run only on `/api/*`:
-
-```bash
-PUBLIC_LAUNCH_READY=true npm run deploy
-```
-
+3. In the Cloudflare dashboard, open the `idaho-gate` Pages project, go to Settings, Variables and Secrets, and add `PUBLIC_LAUNCH_READY` = `true` for Production.
+4. Retry the latest deployment (Deployments, the three dots, Retry deployment). The rebuild drops the `noindex` tags, opens `robots.txt`, removes the password gate and limits functions to `/api/*`.
 5. Add `idahogate.com` as a custom domain on the Pages project.
+
+To go back to private, delete that variable and retry the deployment.
 
 ## Lead delivery
 
-Set these as secrets on the Cloudflare Pages project (Settings, Variables and Secrets, or `npx wrangler pages secret put NAME --project-name idaho-gate`). Never commit them.
+Set these as secrets on the Cloudflare Pages project (Settings, Variables and Secrets), then retry the latest deployment. Never commit them.
 
 | Variable | Required | Purpose |
 |---|---|---|
@@ -137,19 +127,26 @@ Attribution (`src/scripts/attribution.ts`) stores first-touch and last-touch UTM
 
 ## Deploying to Cloudflare Pages
 
-The project is deployed by direct upload: the site is built here and `wrangler` uploads `dist/` together with the `functions/` folder.
+The Cloudflare Pages project `idaho-gate` is connected to this GitHub repository. Cloudflare builds and deploys on every push to the production branch. There is nothing to run by hand.
 
-```bash
-npm run deploy
-```
+| Setting | Value |
+|---|---|
+| Preview URL | https://idaho-gate.pages.dev |
+| Production branch | `claude/affectionate-cerf-90gz6o` (change it under Settings, Builds, if you move work to `main`) |
+| Build command | `npm run build` |
+| Output directory | `dist` |
+| Node version | 22 (`.node-version` and the `NODE_VERSION` variable) |
+| Functions | `functions/` is picked up automatically |
 
-That needs a Cloudflare API token with the Pages edit permission in `CLOUDFLARE_API_TOKEN`, and the account in `CLOUDFLARE_ACCOUNT_ID` if the token can see more than one.
-
-`PUBLIC_*` variables are read at build time, so set them in the shell that runs the build. Everything else is read at request time from the Pages project.
-
-To build on Cloudflare instead, connect the GitHub repository to the Pages project in the dashboard with build command `npm run build` and output directory `dist`, and set `PUBLIC_*` values as build variables.
+Variables and secrets live on the Pages project under Settings, Variables and Secrets. They apply to both the build and the running functions, so `PUBLIC_*` values set there are baked into the pages on the next deployment.
 
 `public/_headers` sets caching and security headers. `public/_redirects` maps the old Squarespace paths from `idahofortifiedgate.com` to the new pages. If you still control that domain, add it to the Pages project so those 301s carry over its search equity.
+
+To check the password gate on the live site:
+
+```bash
+SITE_URL=https://idaho-gate.pages.dev SITE_PASSWORD='your password' npm run test:gate
+```
 
 ## Project layout
 

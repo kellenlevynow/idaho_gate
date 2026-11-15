@@ -17,7 +17,6 @@ Custom gate and metal fabrication company in North Idaho. Brand: **Idaho Gate Co
 - `npm run check:content` after editing copy (title 60, description 155, no dashes)
 - `npm run test:e2e` after touching the wizard, lead API or tracking (run against `npm run pages:dev`, see the header of `scripts/e2e.cjs`)
 - `npm run test:gate` after touching `functions/_middleware.ts`
-- `npm run deploy` builds and uploads to Cloudflare Pages
 - `npm run render:stills` and `npm run render:presets` after changing 3D geometry, materials or lighting (dev server must be running)
 
 ## Where things are
@@ -35,6 +34,6 @@ Custom gate and metal fabrication company in North Idaho. Brand: **Idaho Gate Co
 
 - Astro 7 with content collections using the glob loader. Front matter values containing a colon must be quoted.
 - The dev server's content cache can go stale after a schema error. Delete `.astro/` and restart if entries seem to be missing.
-- Hosting is Cloudflare Pages, deployed by direct upload. The site is fully static. Server code lives in `functions/` and must not import anything that needs `import.meta.env` at load time.
+- Hosting is Cloudflare Pages, project `idaho-gate`, connected to this GitHub repo. Every push to the production branch (`claude/affectionate-cerf-90gz6o`) builds and deploys to https://idaho-gate.pages.dev. The site is fully static. Server code lives in `functions/` and must not import anything that needs `import.meta.env` at load time.
 - The whole site is password protected until the owner releases it. Do not weaken or remove the gate, and never commit the password.
 - `PUBLIC_LAUNCH_READY` gates indexing and the password gate. Keep it false until real contact details are in place and the owner says to go public.
