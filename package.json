@@ -9,7 +9,7 @@
     "preview": "astro preview",
     "check": "astro check",
     "render:stills": "node scripts/render-stills.cjs",
-    "test:e2e": "node scripts/e2e.mjs"
+    "test:e2e": "node scripts/e2e.cjs"
   },
   "dependencies": {
     "@astrojs/netlify": "^8.2.14",

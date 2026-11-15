@@ -1,0 +1,64 @@
+---
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import Drawing from '@/components/Drawing.astro';
+import { site } from '@/site.config';
+---
+<Base title="Thank you. We have your request" description="Your request reached Idaho Gate Co. Here is what happens next." noindex hideCta>
+  <section class="surface-dark grid-dark min-h-[78vh]" data-track-location="thank_you">
+    <div class="wrap grid items-center gap-12 py-16 lg:grid-cols-12 lg:py-24">
+      <div class="lg:col-span-6">
+        <p class="eyebrow text-ember-400">Request received</p>
+        <h1 class="display-sm mt-5"><span data-ty-name>Thank you.</span><br />We have it.</h1>
+        <p class="lede mt-6 max-w-xl text-steel-200" data-ty-lede>Your request is in our inbox. A person will read it and call you within {site.contact.responseTime}.</p>
+        <p class="tech mt-4 text-steel-400" data-ty-ref hidden></p>
+
+        <ol class="mt-10 max-w-xl space-y-5">
+          {[
+            ['We call you', `Within ${site.contact.responseTime}, from ${site.contact.phoneDisplay}. We confirm the details and set a time to visit.`],
+            ['We visit and measure', 'Opening, grade, swing or slide clearance, power and soil. This is where most surprises get caught.'],
+            ['You get a drawing and a written quote', 'A dimensioned concept drawing and a line-item price. Nothing is built until you approve both.'],
+          ].map(([t, d], i) => (
+            <li class="grid grid-cols-[2.5rem_1fr] gap-x-3 border-t border-white/12 pt-5">
+              <span class="tech pt-1 text-ember-400">0{i + 1}</span>
+              <div><p class="h4">{t}</p><p class="mt-1 text-[0.98rem] text-steel-300">{d}</p></div>
+            </li>
+          ))}
+        </ol>
+
+        <div class="mt-10 flex flex-wrap gap-3">
+          <a href="/projects/" class="btn" data-cta="ty_projects">Browse concept studies <Icon name="arrow" /></a>
+          <a href="/studio/" class="btn btn-ghost-dark" data-cta="ty_studio">Try the gate studio</a>
+        </div>
+        <p class="mt-8 text-steel-300">In a hurry? Call <a class="font-[640] text-bone underline" href={`tel:${site.contact.phoneTel}`}>{site.contact.phoneDisplay}</a>.</p>
+      </div>
+      <div class="lg:col-span-6">
+        <div class="sheet sheet-dark"><Drawing preset="estate-ridgeline" theme="dark" decorative /></div>
+        <p class="tech mt-3 text-steel-400">Concept drawing. Yours will be drawn to your opening.</p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { track } from '@/scripts/tracking';
+  // Personalize from the lead just sent, then fire the conversion once.
+  try {
+    const raw = sessionStorage.getItem('igc_last_lead');
+    if (raw) {
+      const lead = JSON.parse(raw) as { form: string; path: string; name: string; id?: string };
+      const name = document.querySelector('[data-ty-name]');
+      if (name && lead.name) name.textContent = `Thanks, ${lead.name.replace(/[<>]/g, '')}.`;
+      const ref = document.querySelector<HTMLElement>('[data-ty-ref]');
+      if (ref && lead.id) { ref.textContent = `Reference ${lead.id}`; ref.hidden = false; }
+      if (lead.path === 'repairs') {
+        const lede = document.querySelector('[data-ty-lede]');
+        if (lede) lede.textContent = 'Your repair request is in our inbox. If the gate is stuck or unsafe right now, call us so we can get you on the schedule today.';
+      }
+      if (!sessionStorage.getItem('igc_conv_fired')) {
+        track('conversion_page', { form: lead.form, path: lead.path });
+        sessionStorage.setItem('igc_conv_fired', lead.id || '1');
+      }
+    }
+  } catch { /* ignore */ }
+</script>

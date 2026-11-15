@@ -1,0 +1,48 @@
+---
+/**
+ * Renders a generated concept drawing as inline SVG.
+ *   kind="gate"  preset from src/data/gate-presets.ts, view elevation | plan
+ *   kind="fab"   key from src/lib/fab-drawings.ts
+ */
+import { gateElevation, gatePlan, type DrawingTheme } from '@/lib/drawing';
+import { fabDrawing } from '@/lib/fab-drawings';
+import { gatePresets } from '@/data/gate-presets';
+import type { GateSpec } from '@/lib/gate-model';
+
+interface Props {
+  kind?: 'gate' | 'fab';
+  preset: string;
+  view?: 'elevation' | 'plan';
+  theme?: DrawingTheme;
+  dims?: boolean;
+  titleBlock?: boolean;
+  footings?: boolean;
+  spec?: Partial<GateSpec>;
+  class?: string;
+  /** decorative use: hidden from assistive tech */
+  decorative?: boolean;
+}
+const { kind = 'gate', preset, view = 'elevation', theme = 'dark', dims = true, titleBlock = true, footings = true, spec, class: cls = '', decorative = false } = Astro.props;
+
+let d;
+if (kind === 'fab') d = fabDrawing(preset, theme);
+else {
+  const p = gatePresets[preset];
+  if (!p) throw new Error(`Unknown gate preset "${preset}"`);
+  const s = { ...p.spec, ...spec };
+  d = view === 'plan'
+    ? gatePlan(s, { theme })
+    : gateElevation(s, { theme, dims, titleBlock, footings, title: p.title, dwg: p.dwg });
+}
+---
+<svg
+  class:list={['drawing h-auto w-full', cls]}
+  viewBox={d.viewBox}
+  width={d.width}
+  height={d.height}
+  role={decorative ? 'presentation' : 'img'}
+  aria-label={decorative ? undefined : d.description}
+  aria-hidden={decorative ? 'true' : undefined}
+  preserveAspectRatio="xMidYMid meet"
+  set:html={d.body}
+/>

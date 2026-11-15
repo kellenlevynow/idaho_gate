@@ -1,0 +1,218 @@
+---
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import TrustStrip from '@/components/TrustStrip.astro';
+import { site, serviceTowns } from '@/site.config';
+import { inquiryPaths, type InquiryPath } from '@/data/nav';
+import { flows } from '@/data/quote-flow';
+import { breadcrumbSchema } from '@/lib/schema';
+
+const paths = Object.keys(flows) as InquiryPath[];
+const towns = serviceTowns.map((t) => ({ label: `${t.name}, ${t.state}`, tier: t.tier }));
+---
+<Base
+  title="Request a quote for a custom gate or fabrication project"
+  description="Tell us about your gate or fabrication project in under a minute. Idaho Gate Co. will call to set up a site visit and send a drawing and written quote."
+  hideCta
+  schema={[breadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Request a quote', path: '/quote/' }])]}
+>
+  <section class="surface-paper on-light min-h-[80vh]" data-track-location="quote_wizard">
+    <div class="wrap grid gap-10 py-10 lg:grid-cols-12 lg:gap-14 lg:py-16">
+      <div class="lg:col-span-8">
+        <p class="eyebrow text-ember-600">Request a quote</p>
+        <h1 class="h2 mt-4">Tell us about the project.</h1>
+        <p class="mt-3 max-w-xl text-steel-500">Under a minute. No account, no obligation. A person reads every request.</p>
+
+        <div id="wizard" class="wizard mt-8" data-wizard data-response={site.contact.responseTime}>
+          <noscript>
+            <p class="border border-ember-600 p-5">This form needs JavaScript. Please call <a class="font-[640] underline" href={`tel:${site.contact.phoneTel}`}>{site.contact.phoneDisplay}</a> or email <a class="underline" href={`mailto:${site.contact.email}`}>{site.contact.email}</a> and we will take the details directly.</p>
+          </noscript>
+
+          <!-- progress -->
+          <div class="wizard-progress" aria-hidden="true" hidden data-progress>
+            <div class="flex items-center justify-between">
+              <p class="tech text-steel-500"><span data-progress-path></span> · Step <span data-progress-n>1</span> of <span data-progress-total>7</span></p>
+              <p class="tech text-steel-500" data-progress-name></p>
+            </div>
+            <div class="mt-2 h-[3px] bg-ink-900/10"><div class="h-full origin-left bg-ember-600 transition-transform duration-500" style="transform:scaleX(0)" data-progress-bar></div></div>
+          </div>
+
+          <form novalidate data-wizard-form>
+            <!-- step 0: path -->
+            <fieldset class="wizard-step" data-step="path">
+              <legend class="h3" tabindex="-1">What can we build for you?</legend>
+              <div class="mt-6 grid gap-3 sm:grid-cols-2">
+                {paths.map((p) => (
+                  <label class="choice choice-lg">
+                    <input type="radio" name="path" value={p} />
+                    <span class="choice-body">
+                      <span class="choice-title">{inquiryPaths[p].label}</span>
+                      <span class="choice-hint">{inquiryPaths[p].blurb}</span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+
+            <!-- per-path steps -->
+            {paths.map((p) => flows[p].map((step, si) => (
+              <fieldset class="wizard-step" data-step={`${p}:${step.id}`} data-path={p} data-index={si} data-name={step.name} hidden>
+                <legend class="h3" tabindex="-1">{step.title}</legend>
+                {step.sub && <p class="mt-2 text-steel-500">{step.sub}</p>}
+                {step.questions.map((q) => (
+                  <div class="question mt-6" data-question={q.id} data-type={q.type} data-required={q.required ? 'true' : 'false'}>
+                    {step.questions.length > 1 && <p class="field-label" id={`${p}-${step.id}-${q.id}-l`}>{q.label}{!q.required && q.type !== 'files' && <span class="normal-case tracking-normal text-steel-500"> (optional)</span>}</p>}
+                    {(q.type === 'single' || q.type === 'multi') && (
+                      <div class:list={['grid gap-3', (q.choices!.length > 4 || q.choices!.some((c) => c.hint)) ? 'sm:grid-cols-2' : 'sm:grid-cols-2 lg:grid-cols-4']} role={q.type === 'single' ? 'radiogroup' : 'group'} aria-label={q.label}>
+                        {q.choices!.map((c) => (
+                          <label class="choice">
+                            <input type={q.type === 'single' ? 'radio' : 'checkbox'} name={`${p}.${q.id}`} value={c.value} />
+                            <span class="choice-body">
+                              <span class="choice-title">{c.label}</span>
+                              {c.hint && <span class="choice-hint">{c.hint}</span>}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                    {q.type === 'city' && (
+                      <div class="max-w-md">
+                        <label class="field-label" for={`${p}-city`}>{q.label}</label>
+                        <input class="field" id={`${p}-city`} name={`${p}.city`} type="text" list="towns" autocomplete="address-level2" placeholder={q.placeholder} />
+                        <p class="mt-2 hidden text-sm text-steel-500" data-city-note></p>
+                      </div>
+                    )}
+                    {q.type === 'files' && (
+                      <div class="max-w-xl">
+                        <p class="field-label">{q.label} <span class="normal-case tracking-normal text-steel-500">(optional)</span></p>
+                        <label class="upload">
+                          <input type="file" class="sr-only" multiple accept="image/jpeg,image/png,image/webp,application/pdf" data-files />
+                          <Icon name="upload" size={20} />
+                          <span><strong class="font-[640]">Add photos or drawings</strong><br /><span class="text-sm text-steel-500">{q.help}</span></span>
+                        </label>
+                        <ul class="mt-3 space-y-2" data-file-list></ul>
+                        <p class="field-error hidden" role="alert" data-file-error></p>
+                      </div>
+                    )}
+                    {q.help && q.type !== 'files' && <p class="mt-2 text-sm text-steel-500">{q.help}</p>}
+                  </div>
+                ))}
+                <p class="field-error mt-4 hidden" role="alert" data-step-error></p>
+              </fieldset>
+            )))}
+
+            <!-- final step: contact -->
+            <fieldset class="wizard-step" data-step="contact" data-name="Contact" hidden>
+              <legend class="h3" tabindex="-1">Where should we reach you?</legend>
+              <p class="mt-2 text-steel-500">We call to set up a site visit. No sales scripts and no sharing your details.</p>
+              <div class="mt-6 grid max-w-2xl gap-4 sm:grid-cols-2">
+                <div>
+                  <label class="field-label" for="w-name">Name</label>
+                  <input class="field" id="w-name" name="name" type="text" autocomplete="name" required />
+                </div>
+                <div>
+                  <label class="field-label" for="w-phone">Phone</label>
+                  <input class="field" id="w-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required />
+                </div>
+                <div>
+                  <label class="field-label" for="w-email">Email</label>
+                  <input class="field" id="w-email" name="email" type="email" autocomplete="email" required />
+                </div>
+                <div>
+                  <label class="field-label" for="w-time">Best time to call <span class="normal-case tracking-normal text-steel-500">(optional)</span></label>
+                  <select class="field" id="w-time" name="bestTime">
+                    <option value="">Any time</option>
+                    <option>Morning</option>
+                    <option>Midday</option>
+                    <option>Afternoon</option>
+                    <option>Evening</option>
+                  </select>
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="field-label" for="w-notes">Anything else we should know? <span class="normal-case tracking-normal text-steel-500">(optional)</span></label>
+                  <textarea class="field" id="w-notes" name="notes" rows="4" placeholder="Slope, snow load, HOA rules, a design you have seen, access for trucks. Anything helps."></textarea>
+                </div>
+              </div>
+              <div class="hp-field" aria-hidden="true"><label>Company website <input type="text" name="company_website" tabindex="-1" autocomplete="off" /></label></div>
+              <p class="field-error mt-4 hidden" role="alert" data-step-error></p>
+            </fieldset>
+
+            <div class="wizard-nav mt-8 flex flex-wrap items-center gap-3" hidden data-nav>
+              <button type="button" class="btn btn-ghost-light" data-back>Back</button>
+              <button type="button" class="btn" data-next>Continue <Icon name="arrow" /></button>
+              <button type="submit" class="btn btn-lg" data-submit hidden><span data-submit-label>Send my request</span> <Icon name="arrow" /></button>
+              <p class="text-sm text-steel-500" data-nav-hint></p>
+            </div>
+            <div class="mt-6 hidden border border-[#b3261e] bg-white p-5" role="alert" data-submit-error>
+              <p class="font-[640]" data-submit-error-text></p>
+              <p class="mt-2">Your answers are still here. You can try again, or call <a class="font-[640] underline" href={`tel:${site.contact.phoneTel}`}>{site.contact.phoneDisplay}</a> and we will take it by phone.</p>
+            </div>
+          </form>
+          <datalist id="towns">{towns.map((t) => <option value={t.label} data-tier={t.tier} />)}</datalist>
+        </div>
+      </div>
+
+      <aside class="lg:col-span-4">
+        <div class="sheet bg-white p-6 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]">
+          <p class="tech text-steel-500">Your request</p>
+          <dl class="summary mt-4" data-summary>
+            <div class="text-sm text-steel-500" data-summary-empty>Your answers appear here as you go.</div>
+          </dl>
+          <div class="mt-6 border-t border-ink-900/10 pt-5">
+            <p class="h4">Rather talk it through?</p>
+            <a href={`tel:${site.contact.phoneTel}`} class="mt-2 inline-flex items-center gap-2 text-[1.3rem] font-[700] text-ember-600 no-underline [font-stretch:110%] tabular-nums"><Icon name="phone" size={18} /> {site.contact.phoneDisplay}</a>
+            <p class="mt-1 text-sm text-steel-500">{site.contact.hours}</p>
+          </div>
+          <div class="mt-5 border-t border-ink-900/10 pt-5">
+            <p class="h4 mb-3">What happens next</p>
+            <ol class="space-y-2 text-sm text-steel-500">
+              <li><span class="tech mr-2 text-ember-600">01</span>We call within {site.contact.responseTime}.</li>
+              <li><span class="tech mr-2 text-ember-600">02</span>We visit, measure and talk through options.</li>
+              <li><span class="tech mr-2 text-ember-600">03</span>You get a drawing and a written quote.</li>
+            </ol>
+          </div>
+          <div class="mt-5 border-t border-ink-900/10 pt-5"><TrustStrip tone="light" compact /></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import '@/scripts/wizard';
+</script>
+
+<style is:global>
+  .wizard-step { border: 0; padding: 0; margin: 2rem 0 0; min-width: 0; }
+  .wizard-step legend { padding: 0; outline: none; }
+  .choice { position: relative; display: block; cursor: pointer; }
+  .choice input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; cursor: pointer; margin: 0; }
+  .choice-body {
+    display: flex; flex-direction: column; justify-content: center; gap: 0.2rem;
+    min-height: 3.6rem; padding: 0.8rem 2.6rem 0.8rem 1rem;
+    background: #fff; border: 1px solid rgb(19 20 21 / 0.22); border-radius: 2px;
+    transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s;
+    position: relative;
+  }
+  .choice-body::after {
+    content: ''; position: absolute; right: 0.9rem; top: 50%; width: 1.05rem; height: 1.05rem; margin-top: -0.525rem;
+    border: 1px solid rgb(19 20 21 / 0.35); border-radius: 50%; transition: all 0.15s;
+  }
+  .choice input[type='checkbox'] + .choice-body::after { border-radius: 2px; }
+  .choice:hover .choice-body { border-color: var(--color-ink-900); }
+  .choice input:focus-visible + .choice-body { outline: 2px solid var(--color-ember-600); outline-offset: 2px; }
+  .choice input:checked + .choice-body { border-color: var(--color-ember-600); background: #fdf6f1; box-shadow: inset 0 0 0 1px var(--color-ember-600); }
+  .choice input:checked + .choice-body::after { background: var(--color-ember-600); border-color: var(--color-ember-600); box-shadow: inset 0 0 0 3px #fdf6f1; }
+  .choice-title { font-weight: 620; font-stretch: 106%; line-height: 1.25; }
+  .choice-hint { font-size: 0.85rem; line-height: 1.35; color: var(--color-steel-500); }
+  .choice-lg .choice-body { min-height: 6.2rem; padding-block: 1.1rem; }
+  .choice-lg .choice-title { font-size: 1.15rem; }
+  .upload { display: flex; align-items: center; gap: 1rem; padding: 1.1rem 1.2rem; background: #fff; border: 1px dashed rgb(19 20 21 / 0.4); cursor: pointer; transition: border-color 0.15s; }
+  .upload:hover, .upload:focus-within { border-color: var(--color-ember-600); }
+  .file-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.55rem 0.8rem; background: #fff; border: 1px solid rgb(19 20 21 / 0.14); font-size: 0.9rem; }
+  .file-row button { color: var(--color-ember-600); font-weight: 600; text-decoration: underline; cursor: pointer; background: none; border: 0; padding: 0.2rem; }
+  .summary > div.row { display: grid; grid-template-columns: 1fr; gap: 0.1rem; padding: 0.55rem 0; border-bottom: 1px solid rgb(19 20 21 / 0.1); }
+  .summary dt { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-steel-500); }
+  .summary dd { font-size: 0.95rem; font-weight: 560; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+</style>

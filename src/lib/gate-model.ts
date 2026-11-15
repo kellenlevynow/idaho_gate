@@ -394,7 +394,8 @@ export function buildGateModel(input: Partial<GateSpec> = {}): GateModel {
       for (let face = 0; face < 4; face++) {
         let u = -size / 2;
         while (u < size / 2 - 0.01) {
-          const bw = Math.min(size / 2 - u, 0.45 + rand() * 0.75);
+          let bw = Math.min(size / 2 - u, 0.45 + rand() * 0.75);
+          if (size / 2 - (u + bw) < 0.3) bw = size / 2 - u; // no slivers at the corner
           const proud = 0.03 + rand() * 0.07;
           const cu = u + bw / 2;
           const off = size / 2 - 0.08 + proud / 2;
@@ -592,8 +593,9 @@ export function buildGateModel(input: Partial<GateSpec> = {}): GateModel {
       } else if (m.kind === 'box') {
         // skip the approach pedestal when measuring the elevation
         if (m.c[2] > 2) continue;
-        const hw = m.rotZ ? Math.max(m.s[0], m.s[1]) / 2 : m.s[0] / 2;
-        const hh = m.rotZ ? Math.max(m.s[0], m.s[1]) / 2 : m.s[1] / 2;
+        const cr = Math.abs(Math.cos(m.rotZ || 0)), sr = Math.abs(Math.sin(m.rotZ || 0));
+        const hw = (m.s[0] * cr + m.s[1] * sr) / 2;
+        const hh = (m.s[0] * sr + m.s[1] * cr) / 2;
         minX = Math.min(minX, m.c[0] - hw); maxX = Math.max(maxX, m.c[0] + hw);
         minY = Math.min(minY, m.c[1] - hh); maxY = Math.max(maxY, m.c[1] + hh);
       }

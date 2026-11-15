@@ -1,0 +1,62 @@
+---
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import QuickQuote from '@/components/QuickQuote.astro';
+import TrustStrip from '@/components/TrustStrip.astro';
+import { site } from '@/site.config';
+import { inquiryPaths, type InquiryPath } from '@/data/nav';
+import { breadcrumbSchema } from '@/lib/schema';
+const paths = Object.entries(inquiryPaths) as [InquiryPath, (typeof inquiryPaths)[InquiryPath]][];
+---
+<Base
+  title="Contact Idaho Gate Co. in North Idaho"
+  description="Call, email or send a quick note to Idaho Gate Co. about a custom gate, automation or metal fabrication project in North Idaho and the Inland Northwest."
+  hideCta
+  schema={[
+    breadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Contact', path: '/contact/' }]),
+    { '@context': 'https://schema.org', '@type': 'ContactPage', name: 'Contact Idaho Gate Co.', url: `${site.url}/contact/` },
+  ]}
+>
+  <section class="surface-dark grid-dark" data-track-location="contact_hero">
+    <div class="wrap grid gap-12 py-14 lg:grid-cols-12 lg:py-20">
+      <div class="lg:col-span-6">
+        <p class="eyebrow text-ember-400">Contact</p>
+        <h1 class="display-sm mt-5">Let's talk about<br />your <span class="serif-accent text-ember-400">project.</span></h1>
+        <p class="lede mt-6 max-w-lg text-steel-200">Call for the fastest answer. If you would rather write, send a quick note here or use the full quote form and we will call you back.</p>
+
+        <a href={`tel:${site.contact.phoneTel}`} class="mt-9 block max-w-md border border-white/20 p-6 text-bone no-underline transition-colors hover:border-ember-400">
+          <span class="tech text-steel-400">Call, free quotes</span>
+          <span class="mt-2 flex items-center gap-3 text-[2rem] font-[740] [font-stretch:116%] tabular-nums"><Icon name="phone" size={24} /> {site.contact.phoneDisplay}</span>
+          <span class="mt-1 block text-sm text-steel-300">{site.contact.hours}</span>
+        </a>
+        <ul class="mt-6 space-y-3 text-[1.02rem]">
+          <li><a class="inline-flex items-center gap-3 text-bone no-underline hover:text-ember-400" href={`mailto:${site.contact.email}`}><Icon name="mail" /> {site.contact.email}</a></li>
+          <li class="inline-flex items-center gap-3 text-steel-300"><Icon name="pin" /> Based in {site.contact.region}. <a class="text-bone underline" href="/service-area/">See the service area</a></li>
+        </ul>
+        <div class="mt-9 max-w-lg"><TrustStrip /></div>
+      </div>
+      <div class="lg:col-span-5 lg:col-start-8">
+        <div class="sheet sheet-dark bg-ink-900/85 p-6 sm:p-8">
+          <QuickQuote id="contact" heading="Send a quick note" context="contact_page" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="surface-paper on-light section-tight">
+    <div class="wrap">
+      <p class="eyebrow text-ember-600">Full quote requests</p>
+      <h2 class="h2 mt-4 max-w-2xl">Pick the path that fits and we will ask only what matters.</h2>
+      <div class="mt-10 grid gap-px bg-ink-900/15 sm:grid-cols-2 lg:grid-cols-4">
+        {paths.map(([key, p], i) => (
+          <a href={`/quote/?path=${key}`} class="group flex flex-col bg-paper p-6 no-underline transition-colors hover:bg-white" data-cta={`contact_path_${key}`}>
+            <span class="tech text-ember-600">0{i + 1}</span>
+            <span class="h3 mt-3">{p.label}</span>
+            <span class="mt-2 flex-1 text-[0.95rem] text-steel-500">{p.blurb}</span>
+            <span class="link-arrow mt-6 self-start">Start <Icon name="arrow" /></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
