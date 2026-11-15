@@ -127,7 +127,9 @@ Attribution (`src/scripts/attribution.ts`) stores first-touch and last-touch UTM
 
 ## Deploying to Cloudflare Pages
 
-The Cloudflare Pages project `idaho-gate` is connected to this GitHub repository. Cloudflare builds and deploys on every push to the production branch. There is nothing to run by hand.
+The Cloudflare Pages project `idaho-gate` is connected to this GitHub repository and Cloudflare builds the site from it. Nothing is built or uploaded from a laptop.
+
+A push to the production branch should start a build on its own. When this project was set up, pushes did not trigger one and each deployment was started by hand. If a push does not show up under Deployments within a minute or two, start one in the dashboard (Deployments, Create deployment, pick the production branch), and check that the Cloudflare Pages GitHub app has access to this repository.
 
 | Setting | Value |
 |---|---|

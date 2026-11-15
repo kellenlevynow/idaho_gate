@@ -34,6 +34,6 @@ Custom gate and metal fabrication company in North Idaho. Brand: **Idaho Gate Co
 
 - Astro 7 with content collections using the glob loader. Front matter values containing a colon must be quoted.
 - The dev server's content cache can go stale after a schema error. Delete `.astro/` and restart if entries seem to be missing.
-- Hosting is Cloudflare Pages, project `idaho-gate`, connected to this GitHub repo. Every push to the production branch (`claude/affectionate-cerf-90gz6o`) builds and deploys to https://idaho-gate.pages.dev. The site is fully static. Server code lives in `functions/` and must not import anything that needs `import.meta.env` at load time.
+- Hosting is Cloudflare Pages, project `idaho-gate`, connected to this GitHub repo. Cloudflare builds the production branch (`claude/affectionate-cerf-90gz6o`) and serves it at https://idaho-gate.pages.dev. Pushes did not auto-trigger builds at setup, so after pushing, confirm a deployment started or trigger one (dashboard, or `POST /accounts/<id>/pages/projects/idaho-gate/deployments` with form field `branch`). The site is fully static. Server code lives in `functions/` and must not import anything that needs `import.meta.env` at load time.
 - The whole site is password protected until the owner releases it. Do not weaken or remove the gate, and never commit the password.
 - `PUBLIC_LAUNCH_READY` gates indexing and the password gate. Keep it false until real contact details are in place and the owner says to go public.
